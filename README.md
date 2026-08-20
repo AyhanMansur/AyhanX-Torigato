@@ -1,6 +1,7 @@
 # 🌐 AyhanX-Torigato
 
 <div align="center">
+   
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen)](https://github.com/AyhanMansur/AyhanX-Torigato)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/AyhanMansur/AyhanX-Torigato)
 [![Python](https://img.shields.io/badge/Python-3.6%2B-3776AB?logo=python)](https://python.org)
