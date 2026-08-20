@@ -1,0 +1,5 @@
+# Tor configuration for TorVault
+SocksPort 9050
+ControlPort 9051
+CookieAuthentication 1
+HashedControlPassword 
