@@ -1,7 +1,8 @@
+
 # 🌐 AyhanX-Torigato
 
 <div align="center">
-   
+
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen)](https://github.com/AyhanMansur/AyhanX-Torigato)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/AyhanMansur/AyhanX-Torigato)
 [![Python](https://img.shields.io/badge/Python-3.6%2B-3776AB?logo=python)](https://python.org)
@@ -37,10 +38,11 @@
 | ⚡ Speed Test | ✅ | Test connection speed |
 | 📊 Statistics | ✅ | Track connection history |
 | 🎨 Beautiful UI | ✅ | Colorful terminal interface |
-| 🚀 One-Click Setup | ✅ | Auto-install dependencies |
-| 🪟 Windows Support | ✅ | BAT & PowerShell versions |
-| 🐧 Linux Support | ✅ | Python version |
-| 🍎 macOS Support | ✅ | Python version |
+| 🚀 Auto-Install | ✅ | Auto-install dependencies |
+| 🪟 Windows Support | ✅ | Native support |
+| 🐧 Linux Support | ✅ | Full support |
+| 🍎 macOS Support | ✅ | Full support |
+| 🔧 Exit Node Control | ✅ | Smart country selection |
 
 ---
 
@@ -78,6 +80,7 @@
 │ 6. Auto-Rotate                                                    │
 │ 7. Statistics                                                     │
 │ 8. History                                                        │
+│ 9. Export History                                                 │
 │ 0. Exit                                                           │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -86,20 +89,23 @@
 
 ## 🚀 Quick Start
 
-### Windows (Easiest)
-```batch
-1. Download AyhanX-Torigato.bat
-2. Double-click to run
-3. Done! 🎉
-```
-
-### Windows PowerShell
-```powershell
-powershell -ExecutionPolicy Bypass -File AyhanX-Torigato.ps1
-```
-
-### Python (Cross-Platform)
+### Windows
 ```bash
+python AyhanX-Torigato.py
+```
+
+### Linux/macOS
+```bash
+python3 AyhanX-Torigato.py
+```
+
+### One-Line Setup
+```bash
+# Clone the repository
+git clone https://github.com/AyhanMansur/AyhanX-Torigato.git
+cd AyhanX-Torigato
+
+# Run (auto-installs dependencies)
 python AyhanX-Torigato.py
 ```
 
@@ -121,35 +127,43 @@ python AyhanX-Torigato.py
 
 ## 🛠️ Installation
 
-### Option 1: Windows BAT File
-```batch
-1. Download AyhanX-Torigato.bat
-2. Place in folder with tor.exe
-3. Double-click to run
-4. Dependencies auto-install
+### Step 1: Install Tor
+
+**Windows:**
+- Download from [torproject.org](https://www.torproject.org/download/)
+- Or use the path in the script (customizable)
+
+**Linux:**
+```bash
+sudo apt update
+sudo apt install tor -y
 ```
 
-### Option 2: Python
+**macOS:**
 ```bash
-# Install dependencies
-pip install stem requests colorama pysocks
+brew install tor
+```
 
-# Run
+### Step 2: Install AyhanX-Torigato
+
+```bash
+# Clone the repository
+git clone https://github.com/AyhanMansur/AyhanX-Torigato.git
+cd AyhanX-Torigato
+
+# Run (auto-installs Python dependencies)
 python AyhanX-Torigato.py
 ```
 
-### Option 3: Linux/macOS
+### Step 3: Configure Tor Path (Optional)
+
+Set the environment variable to your Tor path:
 ```bash
-# Install Tor
-sudo apt install tor  # Ubuntu/Debian
-brew install tor      # macOS
+# Windows PowerShell
+$env:TORVAULT_TOR_PATH = "C:\Path\to\tor.exe"
 
-# Install Python packages
-pip3 install stem requests colorama pysocks
-
-# Download and run
-wget https://raw.githubusercontent.com/AyhanMansur/AyhanX-Torigato/main/AyhanX-Torigato.py
-python3 AyhanX-Torigato.py
+# Linux/macOS
+export TORVAULT_TOR_PATH="/usr/bin/tor"
 ```
 
 ---
@@ -168,6 +182,7 @@ python3 AyhanX-Torigato.py
 | `6` | Auto-Rotate | Set interval in seconds |
 | `7` | Statistics | Success rate |
 | `8` | History | Last connections |
+| `9` | Export History | Save to JSON |
 | `0` | Exit | Clean shutdown |
 
 ### Example Workflow
@@ -195,6 +210,11 @@ python AyhanX-Torigato.py
 📍 Location: Brazil
 🏙️ City: São Paulo
 🔄 Auto-Rotation: Active
+
+# Export history
+> 9
+> Filename: my_history.json
+📁 History exported to my_history.json
 ```
 
 ---
@@ -202,10 +222,11 @@ python AyhanX-Torigato.py
 ## 🌍 Supported Countries
 
 ### 🌎 North America
-| Code | Country | Flag | Code | Country | Flag |
-|------|---------|------|------|---------|------|
-| US | United States | 🇺🇸 | CA | Canada | 🇨🇦 |
-| MX | Mexico | 🇲🇽 | | | |
+| Code | Country | Flag |
+|------|---------|------|
+| US | United States | 🇺🇸 |
+| CA | Canada | 🇨🇦 |
+| MX | Mexico | 🇲🇽 |
 
 ### 🌍 Europe
 | Code | Country | Flag | Code | Country | Flag |
@@ -230,24 +251,62 @@ python AyhanX-Torigato.py
 | ID | Indonesia | 🇮🇩 | | | |
 
 ### 🌏 Oceania
-| Code | Country | Flag | Code | Country | Flag |
-|------|---------|------|------|---------|------|
-| AU | Australia | 🇦🇺 | NZ | New Zealand | 🇳🇿 |
+| Code | Country | Flag |
+|------|---------|------|
+| AU | Australia | 🇦🇺 |
+| NZ | New Zealand | 🇳🇿 |
 
 ### 🌍 South America
-| Code | Country | Flag | Code | Country | Flag |
-|------|---------|------|------|---------|------|
-| BR | Brazil | 🇧🇷 | AR | Argentina | 🇦🇷 |
-| CL | Chile | 🇨🇱 | CO | Colombia | 🇨🇴 |
-| PE | Peru | 🇵🇪 | | | |
+| Code | Country | Flag |
+|------|---------|------|
+| BR | Brazil | 🇧🇷 |
+| AR | Argentina | 🇦🇷 |
+| CL | Chile | 🇨🇱 |
+| CO | Colombia | 🇨🇴 |
+| PE | Peru | 🇵🇪 |
 
 ### 🌍 Africa
-| Code | Country | Flag | Code | Country | Flag |
-|------|---------|------|------|---------|------|
-| ZA | South Africa | 🇿🇦 | EG | Egypt | 🇪🇬 |
-| NG | Nigeria | 🇳🇬 | KE | Kenya | 🇰🇪 |
+| Code | Country | Flag |
+|------|---------|------|
+| ZA | South Africa | 🇿🇦 |
+| EG | Egypt | 🇪🇬 |
+| NG | Nigeria | 🇳🇬 |
+| KE | Kenya | 🇰🇪 |
 
 **Total: 40+ Countries** 🌍
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `TORVAULT_TOR_PATH` | Windows path | Custom Tor executable path |
+| `TOR_PORT` | 9050 | Tor SOCKS port |
+| `CONTROL_PORT` | 9051 | Tor control port |
+
+### Tor Configuration
+
+The script automatically creates a `torrc` file with:
+```ini
+# Tor configuration for TorVault
+SocksPort 9050
+ControlPort 9051
+CookieAuthentication 1
+```
+
+### Custom Tor Path
+
+To use a custom Tor path:
+```bash
+# Windows
+set TORVAULT_TOR_PATH=C:\Your\Path\tor.exe
+
+# Linux/macOS
+export TORVAULT_TOR_PATH=/usr/local/bin/tor
+```
 
 ---
 
@@ -255,11 +314,30 @@ python AyhanX-Torigato.py
 
 | Problem | Solution |
 |---------|----------|
-| ❌ Tor not found | Place tor.exe in same folder |
+| ❌ Tor not found | Set `TORVAULT_TOR_PATH` or place tor.exe in PATH |
 | ❌ ControlPort error | Script auto-configures this |
 | ❌ Python not found | Install Python from python.org |
-| ❌ Connection refused | Run as administrator |
+| ❌ Connection refused | Check if Tor is running |
 | ❌ Package missing | Auto-install handles this |
+| ❌ Permission denied | Run with appropriate privileges |
+
+### Common Error Solutions
+
+**"Failed to connect to Tor control port"**
+```bash
+# Check if Tor is running
+ps aux | grep tor  # Linux/macOS
+tasklist | findstr tor  # Windows
+
+# Start Tor manually
+tor -f torrc
+```
+
+**"tor.exe not found"**
+```bash
+# Set custom path
+export TORVAULT_TOR_PATH="/path/to/tor.exe"
+```
 
 ---
 
@@ -272,6 +350,32 @@ python AyhanX-Torigato.py
 | **CPU Usage** | 5-10% |
 | **RAM Usage** | ~50 MB |
 | **Success Rate** | 85-95% |
+| **Switch Time** | 2-5 seconds |
+
+---
+
+## 🔒 Security Features
+
+- ✅ **No Logging** - No user data stored permanently
+- ✅ **Cookie Authentication** - Secure Tor control access
+- ✅ **Circuit Isolation** - New circuits for each switch
+- ✅ **Exit Node Control** - Smart country selection
+- ✅ **Clean Shutdown** - Proper cleanup on exit
+- ✅ **Signal Handling** - Graceful interrupt handling
+
+---
+
+## 📁 File Structure
+
+```
+AyhanX-Torigato/
+├── AyhanX-Torigato.py   # Main script
+├── README.md            # Documentation
+├── LICENSE              # MIT License
+├── torrc                # Auto-generated config
+├── torvault_*.log       # Session logs
+└── torvault_history_*.json  # Connection history
+```
 
 ---
 
@@ -283,9 +387,34 @@ python AyhanX-Torigato.py
 - 🐙 GitHub: [AyhanMansur](https://github.com/AyhanMansur)
 
 ### 📢 Support
-- 📚 [Documentation](https://github.com/AyhanMansur/AyhanX-Torigato/wiki)
 - 🐛 [Issue Tracker](https://github.com/AyhanMansur/AyhanX-Torigato/issues)
 - 💬 [Discussions](https://github.com/AyhanMansur/AyhanX-Torigato/discussions)
+- 📚 [Documentation](https://github.com/AyhanMansur/AyhanX-Torigato/wiki)
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Here's how:
+
+1. **Fork** the repository
+2. **Create** a feature branch
+3. **Commit** your changes
+4. **Push** to the branch
+5. **Open** a Pull Request
+
+### Development Setup
+```bash
+# Clone your fork
+git clone https://github.com/your-username/AyhanX-Torigato.git
+cd AyhanX-Torigato
+
+# Install development dependencies
+pip install -r requirements-dev.txt
+
+# Run tests
+pytest tests/
+```
 
 ---
 
@@ -322,6 +451,8 @@ SOFTWARE.
 - **[Tor Project](https://torproject.org)** - The anonymous network
 - **[Stem](https://stem.torproject.org)** - Python Tor controller
 - **[IP-API](https://ip-api.com)** - Geolocation API
+- **[Requests](https://requests.readthedocs.io)** - HTTP library
+- **[Colorama](https://github.com/tartley/colorama)** - Terminal colors
 
 ---
 
@@ -329,6 +460,7 @@ SOFTWARE.
 
 <div align="center">
 
+### If you like AyhanX-Torigato, give it a ⭐!
 </div>
 
 ---
@@ -339,6 +471,5 @@ SOFTWARE.
 
 🔒 Stay Anonymous • 🌍 Stay Global • 🛡️ Stay Secure
 
-[⬆ Back to Top](#-ayhanx-torigato)
-
 </div>
+```
