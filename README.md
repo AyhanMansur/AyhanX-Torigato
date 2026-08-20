@@ -1,5 +1,4 @@
 # 🌐 𝑨𝒚𝒉𝒂𝒏𝑿-𝑻𝒐𝒓𝒊𝒈𝒂𝒕𝒐
-
 ```
 ▄▄                              ▄▄▄   ▄▄▄        ▄▄▄▄▄▄▄                                  
    ▄█▀▀█▄         █▄                █▀▀██ ██▀        █▀▀██▀▀▀▀                         █▄      
@@ -11,15 +10,15 @@
             ▀▀▀                                                             ▀▀▀               
 
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║     🌐 AyhanX-Torigato - Multi-Location Tor Network Manager    ║
-║     🔒 Secure • Anonymous • Global Access                      ║
+║     🌐 AyhanX-Torigato - مدیر شبکه تور چندموقعیتی          ║
+║     🔒 امن • ناشناس • دسترسی جهانی                       ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-📅 Session: 20260820_223123
-🔗 Tor: ✅ Connected
-💻 Platform: Windows
-📧 Email: umc.mansur13@icloud.com
-🐙 GitHub: AyhanMansur
+📅 جلسه: ۲۰۲۶۰۸۲۰_۲۲۳۱۲۳
+🔗 تور: ✅ متصل
+💻 پلتفرم: ویندوز
+📧 ایمیل: umc.mansur13@icloud.com
+🐙 گیت‌هاب: AyhanMansur
 ======================================================================
 ```
 
@@ -46,453 +45,449 @@
 
 ---
 
-## 🎯 What is AyhanX-Torigato?
+## 🎯 AyhanX-Torigato چیست؟
 
-**AyhanX-Torigato** is a powerful multi-location Tor network manager that lets you **switch between 40+ countries** instantly. Whether you need to access geo-restricted content, enhance your privacy, or test websites from different locations - AyhanX-Torigato makes it simple and fun!
+**AyhanX-Torigato** یک مدیر شبکه تور چندموقعیتی قدرتمند است که به شما امکان می‌دهد **بین بیش از ۴۰ کشور مختلف** به‌سرعت جابه‌جا شوید. چه بخواهید به محتوای محدودشده جغرافیایی دسترسی داشته باشید، حریم خصوصی خود را افزایش دهید، یا وب‌سایت‌ها را از مکان‌های مختلف آزمایش کنید - AyhanX-Torigato این کار را ساده و لذت‌بخش می‌کند!
 
 ---
+### 🌍 کنترل هویت دیجیتال خود را در دست بگیرید
 
-## 💪 Strong Description
+**AyhanX-Torigato** فقط یک مدیر تور دیگر نیست - این گذرنامه دیجیتال شما به دنیاست. با یک دستور ساده، می‌توانید حضور آنلاین خود را تغییر دهید و از هر یک از ۴۰+ کشور جهان ظاهر شوید. چه یک فعال حریم خصوصی باشید، چه محقق امنیتی، یا فقط کسی که به آزادی دیجیتال خود اهمیت می‌دهد، AyhanX-Torigato قدرت ناشناسی جهانی را در دستان شما قرار می‌دهد.
 
-### 🌍 Take Control of Your Digital Identity
+### 🛡️ حریم خصوصی و امنیت بی‌نظیر
 
-**AyhanX-Torigato** isn't just another Tor manager - it's your digital passport to the world. With a single command, you can transform your online presence, appearing from any of 40+ countries worldwide. Whether you're a privacy advocate, security researcher, or just someone who values their digital freedom, AyhanX-Torigato puts the power of global anonymity in your hands.
+در چشم‌انداز دیجیتال امروزی، حریم خصوصی یک لوکس نیست - یک ضرورت است. AyhanX-Torigato از **شبکه تور** استفاده می‌کند تا اطمینان حاصل کند فعالیت‌های آنلاین شما کاملاً ناشناس باقی می‌ماند. با تغییر پویا بین گره‌های خروجی در بیش از ۴۰ کشور، یک اثر انگشت دیجیتالی دائماً در حال تغییر ایجاد می‌کنید که تقریباً غیرقابل ردیابی است. بدون لاگ، بدون ردیابی، بدون مصالحه.
 
-### 🛡️ Uncompromising Privacy & Security
+### 🚀 ویژگی‌های درجه سازمانی برای همه
 
-In today's digital landscape, privacy isn't a luxury—it's a necessity. AyhanX-Torigato leverages the **Tor network** to ensure your online activities remain completely anonymous. By dynamically switching between exit nodes across 40+ countries, you create a constantly shifting digital footprint that's nearly impossible to trace. No logs, no tracking, no compromise.
+طراحی شده با در نظر گرفتن هم مبتدیان و هم کاربران حرفه‌ای، AyhanX-Torigato ویژگی‌های پیشرفته‌ای را ارائه می‌دهد که معمولاً در ابزارهای امنیتی سازمانی یافت می‌شود:
 
-### 🚀 Enterprise-Grade Features for Everyone
+- **تغییر هوشمند کشور**: الگوریتم‌های هوشمند تضمین می‌کنند با نرخ موفقیت ۸۵-۹۵٪ در کشور مورد نظر قرار بگیرید
+- **فناوری چرخش خودکار**: تنظیم کنید و فراموش کنید - هر X ثانیه به‌طور خودکار مکان را تغییر دهید
+- **نظارت بی‌درنگ**: دقیقاً ببینید از کجا متصل می‌شوید با تأیید فوری IP و موقعیت جغرافیایی
+- **بهینه‌سازی عملکرد**: تست سرعت داخلی به شما کمک می‌کند سریع‌ترین مسیرها را پیدا کنید
+- **تحلیل جامع**: تاریخچه اتصال، نرخ موفقیت و معیارهای عملکرد خود را پیگیری کنید
+---
+### 💎 چرا AyhanX-Torigato متمایز است
 
-Designed with both beginners and power users in mind, AyhanX-Torigato offers sophisticated features typically found in enterprise security tools:
-
-- **Intelligent Country Switching**: Smart algorithms ensure you land in your desired country with 85-95% success rate
-- **Auto-Rotation Technology**: Set it and forget it—automatically rotate locations every X seconds
-- **Real-Time Monitoring**: See exactly where you're connecting from with instant IP and geolocation verification
-- **Performance Optimization**: Built-in speed testing helps you find the fastest routes
-- **Comprehensive Analytics**: Track your connection history, success rates, and performance metrics
-
-### 💎 Why AyhanX-Torigato Stands Out
-
-| Feature | AyhanX-Torigato | Others |
+| ویژگی | AyhanX-Torigato | سایرین |
 |---------|-----------------|---------|
-| 🌍 Countries | 40+ | 10-20 |
-| 🔄 Auto-Rotation | ✅ | ❌ |
-| 📊 Advanced Stats | ✅ | ❌ |
-| ⚡ Speed Testing | ✅ | ❌ |
-| 🎨 Beautiful UI | ✅ | ❌ |
-| 🚀 Auto-Install | ✅ | ❌ |
-| 📁 Export History | ✅ | ❌ |
-| 💰 Price | Free | Paid |
+| 🌍 کشورها | ۴۰+ | ۱۰-۲۰ |
+| 🔄 چرخش خودکار | ✅ | ❌ |
+| 📊 آمار پیشرفته | ✅ | ❌ |
+| ⚡ تست سرعت | ✅ | ❌ |
+| 🎨 رابط کاربری زیبا | ✅ | ❌ |
+| 🚀 نصب خودکار | ✅ | ❌ |
+| 📁 خروجی تاریخچه | ✅ | ❌ |
+| 💰 قیمت | رایگان | پولی |
+---
+### 🔥 مزایای کلیدی
 
-### 🔥 Key Benefits
+**برای علاقه‌مندان به حریم خصوصی**
+- مخفی کردن آدرس IP واقعی
+- دور زدن محدودیت‌های جغرافیایی
+- اجتناب از ردیابی و نظارت
+- محافظت از تحقیقات حساس
 
-**For Privacy Enthusiasts**
-- Hide your real IP address
-- Bypass geo-restrictions
-- Avoid tracking and surveillance
-- Protect sensitive research
+**برای محققان امنیتی**
+- آزمایش وب‌سایت‌ها از مکان‌های متعدد
+- تحلیل محتوای هدفمند جغرافیایی
+- انجام تست نفوذ
+- تحقیق در مورد امنیت شبکه
 
-**For Security Researchers**
-- Test websites from multiple locations
-- Analyze geo-targeted content
-- Conduct penetration testing
-- Research network security
+**برای کاربران روزمره**
+- دسترسی به محتوای استریمینگ از کشورهای دیگر
+- دور زدن سانسور
+- خرید با قیمت‌های محلی
+- لذت بردن از محتوای جهانی بدون مرز
 
-**For Everyday Users**
-- Access streaming content from other countries
-- Bypass censorship
-- Shop with local prices
-- Enjoy global content without borders
+**برای کسب‌وکارها**
+- آزمایش وب‌سایت‌های بین‌المللی
+- نظارت بر رقبای جهانی
+- دسترسی به محتوای خاص بازار
+- تأیید کمپین‌های تبلیغاتی جهانی
+---
+### 🎯 چه کسانی باید از AyhanX-Torigato استفاده کنند؟
 
-**For Businesses**
-- Test international websites
-- Monitor global competitors
-- Access market-specific content
-- Verify global ad campaigns
+✅ **فعالان حریم خصوصی** - از اثر دیجیتال خود محافظت کنید
+✅ **محققان امنیتی** - سیستم‌ها را از مکان‌های متعدد آزمایش کنید
+✅ **روزنامه‌نگاران** - به منابع اطلاعاتی جهانی دسترسی داشته باشید
+✅ **عشایر دیجیتال** - از هر جایی با امنیت کار کنید
+✅ **حرفه‌ای‌های کسب‌وکار** - بازارهای بین‌المللی را آزمایش کنید
+✅ **دانشجویان** - به منابع آکادمیک جهانی دسترسی داشته باشید
+✅ **مسافران** - در خارج از کشور به محتوای خانگی دسترسی داشته باشید
+✅ **هرکسی که به حریم خصوصی اهمیت می‌دهد** - کنترل هویت دیجیتال خود را در دست بگیرید
 
-### 🎯 Who Should Use AyhanX-Torigato?
+### 🔒 تضمین‌های امنیتی
 
-✅ **Privacy Advocates** - Protect your digital footprint
-✅ **Security Researchers** - Test systems from multiple locations
-✅ **Journalists** - Access global information sources
-✅ **Digital Nomads** - Work from anywhere securely
-✅ **Business Professionals** - Test international markets
-✅ **Students** - Access global academic resources
-✅ **Travelers** - Access home content abroad
-✅ **Anyone who values privacy** - Take control of your digital identity
+- **بدون لاگ**: ما هرگز تاریخچه اتصال شما را ذخیره نمی‌کنیم مگر اینکه به‌صراحت آن را صادر کنید
+- **احراز هویت کوکی**: دسترسی امن به کنترل تور
+- **ایزوله‌سازی مدار**: هر تغییر یک مدار جدید و ایزوله ایجاد می‌کند
+- **خاموش‌سازی پاک**: پاک‌سازی مناسب در هنگام خروج، بدون باقی‌گذاشتن اثر
+- **متن‌باز**: کد کاملاً شفاف - خودتان آن را ممیزی کنید
 
-### 🔒 Security Guarantees
+### 💻 آزادی چندپلتفرمی
 
-- **Zero Logging**: We never store your connection history unless you explicitly export it
-- **Cookie Authentication**: Secure Tor control access
-- **Circuit Isolation**: Each switch creates a new, isolated circuit
-- **Clean Shutdown**: Proper cleanup on exit, no trace left behind
-- **Open Source**: Fully transparent code—audit it yourself
+چه در **ویندوز**، **لینوکس**، یا **مک** باشید، AyhanX-Torigato به‌طور یکپارچه در تمام پلتفرم‌های اصلی کار می‌کند. بدون راه‌اندازی پیچیده، بدون مشکلات سازگاری - فقط نصب کنید و بروید.
 
-### 💻 Cross-Platform Freedom
+### 🌟 قول AyhanX-Torigato
 
-Whether you're on **Windows**, **Linux**, or **macOS**, AyhanX-Torigato works seamlessly across all major platforms. No complex setup, no compatibility issues—just install and go.
-
-### 🌟 The TorVault Promise
-
-> "We believe privacy is a fundamental right. AyhanX-Torigato empowers you to take control of your digital identity with the power of the Tor network. Simple, fast, and completely free."
+> "ما معتقدیم حریم خصوصی یک حق اساسی است. AyhanX-Torigato به شما قدرت می‌دهد تا با قدرت شبکه تور، کنترل هویت دیجیتال خود را در دست بگیرید. ساده، سریع و کاملاً رایگان."
 
 ---
+## 🚀 شروع سریع
 
-## 🚀 Quick Start
-
-### Windows
+### ویندوز
 ```bash
 python AyhanX-Torigato.py
 ```
 
-### Linux/macOS
+### لینوکس/مک
 ```bash
 python3 AyhanX-Torigato.py
 ```
 
-### One-Line Setup
+### راه‌اندازی یک‌خطی
 ```bash
-# Clone the repository
+# کلون کردن مخزن
 git clone https://github.com/AyhanMansur/AyhanX-Torigato.git
 cd AyhanX-Torigato
 
-# Run (auto-installs dependencies)
+# اجرا (وابستگی‌ها را به‌طور خودکار نصب می‌کند)
 python AyhanX-Torigato.py
 ```
 
 ---
 
-## 📦 Requirements
+## 📦 نیازمندی‌ها
 
-| Component | Version | Status |
+| مؤلفه | نسخه | وضعیت |
 |-----------|---------|--------|
-| **Windows** | 7, 8, 10, 11 | ✅ |
-| **Linux** | Any Distro | ✅ |
-| **macOS** | 10.13+ | ✅ |
-| **Python** | 3.6+ | ✅ |
-| **Tor** | 7.5+ | ✅ |
-| **Internet** | Required | ✅ |
-| **RAM** | 512 MB | ✅ |
+| **ویندوز** | ۷، ۸، ۱۰، ۱۱ | ✅ |
+| **لینوکس** | هر توزیعی | ✅ |
+| **مک** | ۱۰.۱۳+ | ✅ |
+| **پایتون** | ۳.۶+ | ✅ |
+| **تور** | ۷.۵+ | ✅ |
+| **اینترنت** | الزامی | ✅ |
+| **RAM** | ۵۱۲ مگابایت | ✅ |
 
 ---
 
-## 🛠️ Installation
+## 🛠️ نصب
 
-### Step 1: Install Tor
+### مرحله ۱: نصب تور
 
-**Windows:**
-- Download from [torproject.org](https://www.torproject.org/download/)
-- Or use the path in the script (customizable)
+**ویندوز:**
+- دانلود از [torproject.org](https://www.torproject.org/download/)
+- یا از مسیر در اسکریپت استفاده کنید (قابل تنظیم)
 
-**Linux:**
+**لینوکس:**
 ```bash
 sudo apt update
 sudo apt install tor -y
 ```
 
-**macOS:**
+**مک:**
 ```bash
 brew install tor
 ```
 
-### Step 2: Install AyhanX-Torigato
+### مرحله ۲: نصب AyhanX-Torigato
 
 ```bash
-# Clone the repository
+# کلون کردن مخزن
 git clone https://github.com/AyhanMansur/AyhanX-Torigato.git
 cd AyhanX-Torigato
 
-# Run (auto-installs Python dependencies)
+# اجرا (وابستگی‌های پایتون را به‌طور خودکار نصب می‌کند)
 python AyhanX-Torigato.py
 ```
 
-### Step 3: Configure Tor Path (Optional)
+### مرحله ۳: پیکربندی مسیر تور (اختیاری)
 
-Set the environment variable to your Tor path:
+متغیر محیطی را برای مسیر تور خود تنظیم کنید:
 ```bash
-# Windows PowerShell
+# PowerShell ویندوز
 $env:TORVAULT_TOR_PATH = "C:\Path\to\tor.exe"
 
-# Linux/macOS
+# لینوکس/مک
 export TORVAULT_TOR_PATH="/usr/bin/tor"
 ```
 
 ---
 
-## 💻 Usage Guide
+## 💻 راهنمای استفاده
 
-### Main Commands
+### دستورات اصلی
 
-| Option | Action | Example |
+| گزینه | اقدام | مثال |
 |--------|--------|---------|
-| `1` | Switch Location | `BR` = Brazil |
-| `2` | Random Location | Automatic |
-| `3` | Current Status | Shows IP & location |
-| `4` | Speed Test | Download speed |
-| `5` | All Locations | List all countries |
-| `6` | Auto-Rotate | Set interval in seconds |
-| `7` | Statistics | Success rate |
-| `8` | History | Last connections |
-| `9` | Export History | Save to JSON |
-| `0` | Exit | Clean shutdown |
+| `۱` | تغییر مکان | `BR` = برزیل |
+| `۲` | مکان تصادفی | خودکار |
+| `۳` | وضعیت فعلی | نمایش IP و مکان |
+| `۴` | تست سرعت | سرعت دانلود |
+| `۵` | همه مکان‌ها | لیست همه کشورها |
+| `۶` | چرخش خودکار | تنظیم فاصله زمانی بر حسب ثانیه |
+| `۷` | آمار | نرخ موفقیت |
+| `۸` | تاریخچه | آخرین اتصالات |
+| `۹` | خروجی تاریخچه | ذخیره در JSON |
+| `۰` | خروج | خاموش‌سازی پاک |
 
-### Example Workflow
+### گردش کار نمونه
 
 ```bash
-# Start AyhanX-Torigato
+# شروع AyhanX-Torigato
 python AyhanX-Torigato.py
 
-# Switch to Brazil
+# تغییر به برزیل
 > 1
-> Enter country code: BR
-✅ Connected to 🇧🇷 Brazil
+> کد کشور را وارد کنید: BR
+✅ متصل به 🇧🇷 برزیل
 🌐 IP: 187.32.XX.XX
-📍 Location: São Paulo, BR
+📍 مکان: سائوپائولو، BR
 
-# Enable auto-rotation
+# فعال‌سازی چرخش خودکار
 > 6
-> Interval: 30
-🔄 Auto-rotation every 30 seconds
+> فاصله زمانی: 30
+🔄 چرخش خودکار هر 30 ثانیه
 
-# Check status
+# بررسی وضعیت
 > 3
-📊 Current Status
+📊 وضعیت فعلی
 🌐 IP: 187.32.XX.XX
-📍 Location: Brazil
-🏙️ City: São Paulo
-🔄 Auto-Rotation: Active
+📍 مکان: برزیل
+🏙️ شهر: سائوپائولو
+🔄 چرخش خودکار: فعال
 
-# Export history
+# خروجی تاریخچه
 > 9
-> Filename: my_history.json
-📁 History exported to my_history.json
+> نام فایل: my_history.json
+📁 تاریخچه به my_history.json صادر شد
 ```
 
 ---
 
-## 🌍 Supported Countries
+## 🌍 کشورهای پشتیبانی‌شده
 
-### 🌎 North America
-| Code | Country | Flag |
+### 🌎 آمریکای شمالی
+| کد | کشور | پرچم |
 |------|---------|------|
-| US | United States | 🇺🇸 |
-| CA | Canada | 🇨🇦 |
-| MX | Mexico | 🇲🇽 |
+| US | ایالات متحده | 🇺🇸 |
+| CA | کانادا | 🇨🇦 |
+| MX | مکزیک | 🇲🇽 |
 
-### 🌍 Europe
-| Code | Country | Flag | Code | Country | Flag |
+### 🌍 اروپا
+| کد | کشور | پرچم | کد | کشور | پرچم |
 |------|---------|------|------|---------|------|
-| DE | Germany | 🇩🇪 | FR | France | 🇫🇷 |
-| GB | United Kingdom | 🇬🇧 | IT | Italy | 🇮🇹 |
-| ES | Spain | 🇪🇸 | NL | Netherlands | 🇳🇱 |
-| SE | Sweden | 🇸🇪 | CH | Switzerland | 🇨🇭 |
-| NO | Norway | 🇳🇴 | FI | Finland | 🇫🇮 |
-| PT | Portugal | 🇵🇹 | RU | Russia | 🇷🇺 |
-| TR | Turkey | 🇹🇷 | | | |
+| DE | آلمان | 🇩🇪 | FR | فرانسه | 🇫🇷 |
+| GB | بریتانیا | 🇬🇧 | IT | ایتالیا | 🇮🇹 |
+| ES | اسپانیا | 🇪🇸 | NL | هلند | 🇳🇱 |
+| SE | سوئد | 🇸🇪 | CH | سوئیس | 🇨🇭 |
+| NO | نروژ | 🇳🇴 | FI | فنلاند | 🇫🇮 |
+| PT | پرتغال | 🇵🇹 | RU | روسیه | 🇷🇺 |
+| TR | ترکیه | 🇹🇷 | | | |
 
-### 🌏 Asia
-| Code | Country | Flag | Code | Country | Flag |
+### 🌏 آسیا
+| کد | کشور | پرچم | کد | کشور | پرچم |
 |------|---------|------|------|---------|------|
-| JP | Japan | 🇯🇵 | IN | India | 🇮🇳 |
-| CN | China | 🇨🇳 | SG | Singapore | 🇸🇬 |
-| AE | UAE | 🇦🇪 | IL | Israel | 🇮🇱 |
-| PK | Pakistan | 🇵🇰 | BD | Bangladesh | 🇧🇩 |
-| PH | Philippines | 🇵🇭 | VN | Vietnam | 🇻🇳 |
-| TH | Thailand | 🇹🇭 | MY | Malaysia | 🇲🇾 |
-| ID | Indonesia | 🇮🇩 | | | |
+| JP | ژاپن | 🇯🇵 | IN | هند | 🇮🇳 |
+| CN | چین | 🇨🇳 | SG | سنگاپور | 🇸🇬 |
+| AE | امارات متحده عربی | 🇦🇪 | IL | اسرائیل | 🇮🇱 |
+| PK | پاکستان | 🇵🇰 | BD | بنگلادش | 🇧🇩 |
+| PH | فیلیپین | 🇵🇭 | VN | ویتنام | 🇻🇳 |
+| TH | تایلند | 🇹🇭 | MY | مالزی | 🇲🇾 |
+| ID | اندونزی | 🇮🇩 | | | |
 
-### 🌏 Oceania
-| Code | Country | Flag |
+### 🌏 اقیانوسیه
+| کد | کشور | پرچم |
 |------|---------|------|
-| AU | Australia | 🇦🇺 |
-| NZ | New Zealand | 🇳🇿 |
+| AU | استرالیا | 🇦🇺 |
+| NZ | نیوزیلند | 🇳🇿 |
 
-### 🌎 South America
-| Code | Country | Flag |
+### 🌎 آمریکای جنوبی
+| کد | کشور | پرچم |
 |------|---------|------|
-| BR | Brazil | 🇧🇷 |
-| AR | Argentina | 🇦🇷 |
-| CL | Chile | 🇨🇱 |
-| CO | Colombia | 🇨🇴 |
-| PE | Peru | 🇵🇪 |
+| BR | برزیل | 🇧🇷 |
+| AR | آرژانتین | 🇦🇷 |
+| CL | شیلی | 🇨🇱 |
+| CO | کلمبیا | 🇨🇴 |
+| PE | پرو | 🇵🇪 |
 
-### 🌍 Africa
-| Code | Country | Flag |
+### 🌍 آفریقا
+| کد | کشور | پرچم |
 |------|---------|------|
-| ZA | South Africa | 🇿🇦 |
-| EG | Egypt | 🇪🇬 |
-| NG | Nigeria | 🇳🇬 |
-| KE | Kenya | 🇰🇪 |
+| ZA | آفریقای جنوبی | 🇿🇦 |
+| EG | مصر | 🇪🇬 |
+| NG | نیجریه | 🇳🇬 |
+| KE | کنیا | 🇰🇪 |
 
-**Total: 40+ Countries** 🌍
+**مجموع: ۴۰+ کشور** 🌍
 
 ---
 
-## ⚙️ Configuration
+## ⚙️ پیکربندی
 
-### Environment Variables
+### متغیرهای محیطی
 
-| Variable | Default | Description |
+| متغیر | پیش‌فرض | توضیحات |
 |----------|---------|-------------|
-| `TORVAULT_TOR_PATH` | Windows path | Custom Tor executable path |
-| `TOR_PORT` | 9050 | Tor SOCKS port |
-| `CONTROL_PORT` | 9051 | Tor control port |
+| `TORVAULT_TOR_PATH` | مسیر ویندوز | مسیر سفارشی فایل اجرایی تور |
+| `TOR_PORT` | ۹۰۵۰ | پورت SOCKS تور |
+| `CONTROL_PORT` | ۹۰۵۱ | پورت کنترل تور |
 
-### Tor Configuration
+### پیکربندی تور
 
-The script automatically creates a `torrc` file with:
+اسکریپت به‌طور خودکار یک فایل `torrc` با موارد زیر ایجاد می‌کند:
 ```ini
-# Tor configuration for TorVault
+# پیکربندی تور برای TorVault
 SocksPort 9050
 ControlPort 9051
 CookieAuthentication 1
 ```
 
-### Custom Tor Path
+### مسیر سفارشی تور
 
-To use a custom Tor path:
+برای استفاده از مسیر سفارشی تور:
 ```bash
-# Windows
+# ویندوز
 set TORVAULT_TOR_PATH=C:\Your\Path\tor.exe
 
-# Linux/macOS
+# لینوکس/مک
 export TORVAULT_TOR_PATH=/usr/local/bin/tor
 ```
 
 ---
 
-## 🔧 Troubleshooting
+## 🔧 عیب‌یابی
 
-| Problem | Solution |
+| مشکل | راه‌حل |
 |---------|----------|
-| ❌ Tor not found | Set `TORVAULT_TOR_PATH` or place tor.exe in PATH |
-| ❌ ControlPort error | Script auto-configures this |
-| ❌ Python not found | Install Python from python.org |
-| ❌ Connection refused | Check if Tor is running |
-| ❌ Package missing | Auto-install handles this |
-| ❌ Permission denied | Run with appropriate privileges |
+| ❌ تور پیدا نشد | `TORVAULT_TOR_PATH` را تنظیم کنید یا tor.exe را در PATH قرار دهید |
+| ❌ خطای ControlPort | اسکریپت به‌طور خودکار این را پیکربندی می‌کند |
+| ❌ پایتون پیدا نشد | پایتون را از python.org نصب کنید |
+| ❌ اتصال رد شد | بررسی کنید که تور در حال اجرا باشد |
+| ❌ بسته گم شده | نصب خودکار این را مدیریت می‌کند |
+| ❌ دسترسی رد شد | با مجوزهای مناسب اجرا کنید |
 
-### Common Error Solutions
+### راه‌حل‌های خطاهای رایج
 
-**"Failed to connect to Tor control port"**
+**"اتصال به پورت کنترل تور ناموفق بود"**
 ```bash
-# Check if Tor is running
-ps aux | grep tor  # Linux/macOS
-tasklist | findstr tor  # Windows
+# بررسی کنید که تور در حال اجرا باشد
+ps aux | grep tor  # لینوکس/مک
+tasklist | findstr tor  # ویندوز
 
-# Start Tor manually
+# شروع دستی تور
 tor -f torrc
 ```
 
-**"tor.exe not found"**
+**"tor.exe یافت نشد"**
 ```bash
-# Set custom path
+# تنظیم مسیر سفارشی
 export TORVAULT_TOR_PATH="/path/to/tor.exe"
 ```
 
 ---
 
-## 📊 Performance
+## 📊 عملکرد
 
-| Feature | Performance |
+| ویژگی | عملکرد |
 |---------|-------------|
-| **Speed** | 1-3 Mbps average |
-| **Latency** | 150-300 ms |
-| **CPU Usage** | 5-10% |
-| **RAM Usage** | ~50 MB |
-| **Success Rate** | 85-95% |
-| **Switch Time** | 2-5 seconds |
+| **سرعت** | ۱-۳ مگابیت بر ثانیه متوسط |
+| **تأخیر** | ۱۵۰-۳۰۰ میلی‌ثانیه |
+| **استفاده CPU** | ۵-۱۰٪ |
+| **استفاده RAM** | ~۵۰ مگابایت |
+| **نرخ موفقیت** | ۸۵-۹۵٪ |
+| **زمان تغییر** | ۲-۵ ثانیه |
 
 ---
 
-## 🔒 Security Features
+## 🔒 ویژگی‌های امنیتی
 
-- ✅ **No Logging** - No user data stored permanently
-- ✅ **Cookie Authentication** - Secure Tor control access
-- ✅ **Circuit Isolation** - New circuits for each switch
-- ✅ **Exit Node Control** - Smart country selection
-- ✅ **Clean Shutdown** - Proper cleanup on exit
-- ✅ **Signal Handling** - Graceful interrupt handling
+- ✅ **بدون لاگ** - هیچ داده کاربری به‌طور دائمی ذخیره نمی‌شود
+- ✅ **احراز هویت کوکی** - دسترسی امن به کنترل تور
+- ✅ **ایزوله‌سازی مدار** - مدارهای جدید برای هر تغییر
+- ✅ **کنترل گره خروجی** - انتخاب هوشمند کشور
+- ✅ **خاموش‌سازی پاک** - پاک‌سازی مناسب در هنگام خروج
+- ✅ **مدیریت سیگنال** - مدیریت وقفه‌های نرم
 
 ---
 
-## 📁 File Structure
+## 📁 ساختار فایل
 
 ```
 AyhanX-Torigato/
-├── AyhanX-Torigato.py   # Main script
-├── README.md            # Documentation
-├── LICENSE              # MIT License
-├── torrc                # Auto-generated config
-├── torvault_*.log       # Session logs
-└── torvault_history_*.json  # Connection history
+├── AyhanX-Torigato.py   # اسکریپت اصلی
+├── README.md            # مستندات
+├── LICENSE              # مجوز MIT
+├── torrc                # پیکربندی خودکار
+├── torvault_*.log       # لاگ‌های جلسه
+└── torvault_history_*.json  # تاریخچه اتصالات
 ```
 
 ---
 
-## 📧 Contact
+## 📧 ارتباط
 
-### 👤 Author
-**Ayhan Mansur**
-- 📧 Email: umc.mansur13@icloud.com
-- 🐙 GitHub: [AyhanMansur](https://github.com/AyhanMansur)
+### 👤 نویسنده
+**آیهان منصور**
+- 📧 ایمیل: umc.mansur13@icloud.com
+- 🐙 گیت‌هاب: [AyhanMansur](https://github.com/AyhanMansur)
 
-### 📢 Support
-- 🐛 [Issue Tracker](https://github.com/AyhanMansur/AyhanX-Torigato/issues)
-- 💬 [Discussions](https://github.com/AyhanMansur/AyhanX-Torigato/discussions)
-- 📚 [Documentation](https://github.com/AyhanMansur/AyhanX-Torigato/wiki)
+### 📢 پشتیبانی
+- 🐛 [ردیاب مشکلات](https://github.com/AyhanMansur/AyhanX-Torigato/issues)
+- 💬 [بحث‌ها](https://github.com/AyhanMansur/AyhanX-Torigato/discussions)
+- 📚 [مستندات](https://github.com/AyhanMansur/AyhanX-Torigato/wiki)
 
 ---
 
-## 🤝 Contributing
+## 🤝 مشارکت
 
-Contributions are welcome! Here's how:
+مشارکت‌ها خوش‌آمد هستند! روش زیر را دنبال کنید:
 
-1. **Fork** the repository
-2. **Create** a feature branch
-3. **Commit** your changes
-4. **Push** to the branch
-5. **Open** a Pull Request
+1. **انشعاب** (Fork) مخزن
+2. **ایجاد** شاخه ویژگی
+3. **ثبت** تغییرات خود
+4. **ارسال** به شاخه
+5. **باز کردن** یک درخواست کشش (Pull Request)
 
-### Development Setup
+### راه‌اندازی توسعه
 ```bash
-# Clone your fork
-git clone https://github.com/your-username/AyhanX-Torigato.git
+# کلون کردن انشعاب خود
+git clone https://github.com/username-shoma/AyhanX-Torigato.git
 cd AyhanX-Torigato
 
-# Install development dependencies
+# نصب وابستگی‌های توسعه
 pip install -r requirements-dev.txt
 
-# Run tests
+# اجرای تست‌ها
 pytest tests/
 ```
 
 ---
 
-## 🙏 Acknowledgments
+## 🙏 قدردانی
 
-- **[Tor Project](https://torproject.org)** - The anonymous network
-- **[Stem](https://stem.torproject.org)** - Python Tor controller
-- **[IP-API](https://ip-api.com)** - Geolocation API
-- **[Requests](https://requests.readthedocs.io)** - HTTP library
-- **[Colorama](https://github.com/tartley/colorama)** - Terminal colors
+- **[پروژه تور](https://torproject.org)** - شبکه ناشناس
+- **[Stem](https://stem.torproject.org)** - کنترل‌کننده پایتون تور
+- **[IP-API](https://ip-api.com)** - API موقعیت‌یابی جغرافیایی
+- **[Requests](https://requests.readthedocs.io)** - کتابخانه HTTP
+- **[Colorama](https://github.com/tartley/colorama)** - رنگ‌های ترمینال
 
 ---
 
-## ⭐ Show Your Support
+## ⭐ حمایت خود را نشان دهید
 
 <div align="center">
 
-### If you like AyhanX-Torigato, give it a ⭐!
+### اگر AyhanX-Torigato را دوست دارید، به آن ⭐ بدهید!
 </div>
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by Ayhan Mansur**
+**ساخته شده با ❤️ توسط آیهان منصور**
 
-🔒 Stay Anonymous • 🌍 Stay Global • 🛡️ Stay Secure
+🔒 ناشناس بمانید • 🌍 جهانی بمانید • 🛡️ امن بمانید
 </div>
