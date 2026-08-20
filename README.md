@@ -329,11 +329,6 @@ SOFTWARE.
 
 <div align="center">
 
-### If you like AyhanX-Torigato, give it a ⭐!
-
-[![GitHub stars](https://img.shields.io/github/stars/AyhanMansur/AyhanX-Torigato?style=for-the-badge)](https://github.com/AyhanMansur/AyhanX-Torigato/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/AyhanMansur/AyhanX-Torigato?style=for-the-badge)](https://github.com/AyhanMansur/AyhanX-Torigato/network/members)
-
 </div>
 
 ---
