@@ -1,4 +1,29 @@
-# 🌐 AyhanX-Torigato
+# 🌐 𝑨𝒚𝒉𝒂𝒏𝑿-𝑻𝒐𝒓𝒊𝒈𝒂𝒕𝒐
+
+```
+▄▄                              ▄▄▄   ▄▄▄        ▄▄▄▄▄▄▄                                  
+   ▄█▀▀█▄         █▄                █▀▀██ ██▀        █▀▀██▀▀▀▀                         █▄      
+   ██  ██         ██          ▄        ▀█▄█▀            ██         ▄    ▀▀    ▄▄      ▄██▄     
+   ██▀▀██   ██ ██ ████▄ ▄▀▀█▄ ████▄     ████▄             ███            ██   ▄███▄ ███████ ▄▀▀█▄ ██ ▄███▄
+ ▄ ██  ██   ████ ██ ██ ▄██▀██ ██ ██   ▄██▀██▄   ▀▀▀▀     ██   ██ ██ ██   ██ ██ ██ ▄██▀██ ██ ██ ██
+ ▀██▀  ▀█▄█▄▄▀██▀▄██ ███▀█▄██▄██ ▀█ ▀██▀  ▀██▄          ▀██▄▄▀████▀▄██▀  ▄███▄▀███▄▀█▄██▄██▄▀██▀
+              ██                                                              ██               
+            ▀▀▀                                                             ▀▀▀               
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║     🌐 AyhanX-Torigato - Multi-Location Tor Network Manager    ║
+║     🔒 Secure • Anonymous • Global Access                      ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📅 Session: 20260820_223123
+🔗 Tor: ✅ Connected
+💻 Platform: Windows
+📧 Email: umc.mansur13@icloud.com
+🐙 GitHub: AyhanMansur
+======================================================================
+```
+
+---
 
 <div align="center">
 
@@ -112,47 +137,6 @@ Whether you're on **Windows**, **Linux**, or **macOS**, AyhanX-Torigato works se
 ### 🌟 The TorVault Promise
 
 > "We believe privacy is a fundamental right. AyhanX-Torigato empowers you to take control of your digital identity with the power of the Tor network. Simple, fast, and completely free."
-
----
-
-## 📸 Preview
-
-```
-▄▄                              ▄▄▄   ▄▄▄        ▄▄▄▄▄▄▄                                  
-   ▄█▀▀█▄         █▄                █▀▀██ ██▀        █▀▀██▀▀▀▀                         █▄      
-   ██  ██         ██          ▄        ▀█▄█▀            ██         ▄    ▀▀    ▄▄      ▄██▄     
-   ██▀▀██   ██ ██ ████▄ ▄▀▀█▄ ████▄     ████▄             ███            ██   ▄███▄ ███████ ▄▀▀█▄ ██ ▄███▄
- ▄ ██  ██   ████ ██ ██ ▄██▀██ ██ ██   ▄██▀██▄   ▀▀▀▀     ██   ██ ██ ██   ██ ██ ██ ▄██▀██ ██ ██ ██
- ▀██▀  ▀█▄█▄▄▀██▀▄██ ███▀█▄██▄██ ▀█ ▀██▀  ▀██▄          ▀██▄▄▀████▀▄██▀  ▄███▄▀███▄▀█▄██▄██▄▀██▀
-              ██                                                              ██               
-            ▀▀▀                                                             ▀▀▀               
-
-╔══════════════════════════════════════════════════════════════════════════════╗
-║     🌐 AyhanX-Torigato - Multi-Location Tor Network Manager    ║
-║     🔒 Secure • Anonymous • Global Access                      ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-📅 Session: 20260820_223123
-🔗 Tor: ✅ Connected
-💻 Platform: Windows
-📧 Email: umc.mansur13@icloud.com
-🐙 GitHub: AyhanMansur
-======================================================================
-
-🎯 Main Menu
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ 1. Switch Location                                                 │
-│ 2. Random Location                                                 │
-│ 3. Current Status                                                  │
-│ 4. Speed Test                                                      │
-│ 5. All Locations                                                   │
-│ 6. Auto-Rotate                                                     │
-│ 7. Statistics                                                      │
-│ 8. History                                                         │
-│ 9. Export History                                                  │
-│ 0. Exit                                                            │
-└──────────────────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
