@@ -1,4 +1,4 @@
-# 🌐 AyhanX-Torigato - نسخه فارسی کامل
+# 🌐 AyhanX-Torigato
 
 <div align="center">
 
