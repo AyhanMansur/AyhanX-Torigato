@@ -472,4 +472,3 @@ SOFTWARE.
 🔒 Stay Anonymous • 🌍 Stay Global • 🛡️ Stay Secure
 
 </div>
-```
