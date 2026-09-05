@@ -1,852 +1,630 @@
-#!/usr/bin/env python3
-"""
-🌐 TorVault - Multi-Location Tor Network Manager
-A powerful tool to control Tor exit nodes across different countries
-"""
+#!/usr/bin/env bash
+# tor-node-manager.sh
+# Local Tor SOCKS5 exit-node manager for country-based outbounds.
+# It does NOT touch x-ui / 3x-ui / Xray configs. It only creates local SOCKS5 ports.
 
-import os
-import sys
-import time
-import json
-import subprocess
-import requests
-import socket
-import signal
-from typing import Optional, Dict, List
-from dataclasses import dataclass
-from colorama import init, Fore, Style, just_fix_windows_console
-import stem
-from stem import Signal
-from stem.control import Controller
-import random
-from datetime import datetime
-import threading
-import platform
-import traceback
+set -Eeuo pipefail
 
-# Fix Windows console for colorama
-just_fix_windows_console()
+APP_NAME="tor-node-manager"
+BASE_DIR="/etc/tor-multi"
+NODE_DIR="${BASE_DIR}/nodes"
+TORRC_DIR="/etc/tor"
+DATA_BASE="/var/lib/tor-multi"
+LOG_BASE="/var/log/tor-multi"
+DEFAULT_ATTEMPTS=8
+DEFAULT_WAIT=70
 
-# Initialize colorama for cross-platform colored output
-init(autoreset=True)
+# Countries shown in the menu: code|name|default_port
+COUNTRIES=(
+  "tr|Turkey|9053"
+  "de|Germany|9054"
+  "nl|Netherlands|9055"
+  "fr|France|9056"
+)
 
-# ==================== ASCII ART BANNER ====================
-BANNER = f"""
-{Fore.CYAN}▄▄                              ▄▄▄   ▄▄▄        ▄▄▄▄▄▄▄                                  
-{Fore.CYAN}   ▄█▀▀█▄         █▄                █▀▀██ ██▀        █▀▀██▀▀▀▀                         █▄      
-{Fore.CYAN}   ██  ██         ██          ▄        ▀█▄█▀            ██         ▄    ▀▀    ▄▄      ▄██▄     
-{Fore.CYAN}   ██▀▀██   ██ ██ ████▄ ▄▀▀█▄ ████▄     ███             ██   ▄███▄ ████▄██ ▄████ ▄▀▀█▄ ██ ▄███▄
-{Fore.CYAN} ▄ ██  ██   ██▄██ ██ ██ ▄█▀██ ██ ██   ▄█▀██▄   ▀▀▀▀     ██   ██ ██ ██   ██ ██ ██ ▄█▀██ ██ ██ ██
-{Fore.CYAN} ▀██▀  ▀█▄█▄▄▀██▀▄██ ██▄▀█▄██▄██ ▀█ ▀██▀  ▀██▄          ▀██▄▄▀███▀▄█▀  ▄██▄▀████▄▀█▄██▄██▄▀███▀
-{Fore.CYAN}              ██                                                              ██               
-{Fore.BLUE}            ▀▀▀                                                             ▀▀▀               
-{Style.RESET_ALL}
-{Fore.CYAN}╔══════════════════════════════════════════════════════════════════╗
-{Fore.YELLOW}║     {Fore.CYAN}🌐 TorVault v2.1 - Multi-Location Tor Network Manager{Fore.YELLOW}     ║
-{Fore.YELLOW}║     {Fore.GREEN}🔒 Secure • Anonymous • Global Access{Fore.YELLOW}               ║
-{Fore.YELLOW}╚══════════════════════════════════════════════════════════════════╝{Style.RESET_ALL}
-"""
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
+BOLD='\033[1m'
+NC='\033[0m'
 
-# Required packages for the script
-REQUIRED_PACKAGES = {
-    'stem': 'stem',
-    'requests': 'requests',
-    'colorama': 'colorama',
-    'socks': 'pysocks',   # import name is "socks", pip name is "pysocks"
+msg()  { echo -e "${BLUE}==>${NC} $*"; }
+ok()   { echo -e "${GREEN}OK:${NC} $*"; }
+warn() { echo -e "${YELLOW}WARN:${NC} $*"; }
+err()  { echo -e "${RED}ERROR:${NC} $*" >&2; }
+
+# ====================== UI BANNER ==========================
+show_banner() {
+  clear
+  echo -e "${CYAN}${BOLD}"
+  cat << "EOF"
+ ▄▄                              ▄▄▄   ▄▄▄        ▄▄▄▄▄▄▄
+   ▄█▀▀█▄         █▄                █▀▀██ ██▀        █▀▀██▀▀▀▀                         █▄
+   ██  ██         ██          ▄        ▀█▄█▀            ██         ▄    ▀▀    ▄▄      ▄██▄
+   ██▀▀██   ██ ██ ████▄ ▄▀▀█▄ ████▄     ███             ██   ▄███▄ ████▄██ ▄████ ▄▀▀█▄ ██ ▄███▄
+ ▄ ██  ██   ██▄██ ██ ██ ▄█▀██ ██ ██   ▄█▀██▄   ▀▀▀▀     ██   ██ ██ ██   ██ ██ ██ ▄█▀██ ██ ██ ██
+ ▀██▀  ▀█▄█▄▄▀██▀▄██ ██▄▀█▄██▄██ ▀█ ▀██▀  ▀██▄          ▀██▄▄▀███▀▄█▀  ▄██▄▀████▄▀█▄██▄██▄▀███▀
+              ██                                                              ██
+            ▀▀▀                                                             ▀▀▀
+EOF
+  echo -e "${NC}"
+  echo -e "${CYAN}╔══════════════════════════════════════════════════════════════════╗"
+  echo -e "${CYAN}║${YELLOW}     🌐 Tor Node Manager v2.0 – Multi‑Country SOCKS5 Proxy${CYAN}     ║"
+  echo -e "${CYAN}║${GREEN}     🔒 Local • Lightweight • No x‑ui touch${CYAN}                  ║"
+  echo -e "${CYAN}╚══════════════════════════════════════════════════════════════════╝${NC}"
+  echo ""
 }
 
-
-@dataclass
-class TorLocation:
-    """Data class for Tor location configuration"""
-    country_code: str
-    country_name: str
-    flag: str
-    capital: str = ""
-    continent: str = ""
-    nodes: List[str] = None
-
-    def __post_init__(self):
-        if self.nodes is None:
-            self.nodes = []
-
-
-class RequirementsInstaller:
-    """Handles automatic installation of required packages"""
-
-    @staticmethod
-    def check_package(package_name: str) -> bool:
-        try:
-            __import__(package_name)
-            return True
-        except ImportError:
-            return False
-
-    @staticmethod
-    def install_package(package_name: str) -> bool:
-        try:
-            print(f"{Fore.YELLOW}[+] Installing {package_name}...{Style.RESET_ALL}")
-            subprocess.check_call(
-                [sys.executable, "-m", "pip", "install", "--quiet", package_name],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
-            )
-            print(f"{Fore.GREEN}[+] Successfully installed {package_name}{Style.RESET_ALL}")
-            return True
-        except subprocess.CalledProcessError:
-            print(f"{Fore.RED}[!] Failed to install {package_name}{Style.RESET_ALL}")
-            return False
-
-    @staticmethod
-    def install_all_packages() -> bool:
-        print(f"\n{Fore.CYAN}[i] Checking and installing required packages...{Style.RESET_ALL}")
-        print("=" * 50)
-
-        missing_packages = []
-        for import_name, package_name in REQUIRED_PACKAGES.items():
-            if not RequirementsInstaller.check_package(import_name):
-                missing_packages.append(package_name)
-
-        if not missing_packages:
-            print(f"{Fore.GREEN}[+] All required packages are already installed!{Style.RESET_ALL}")
-            return True
-
-        print(f"{Fore.YELLOW}[*] Missing packages: {', '.join(missing_packages)}{Style.RESET_ALL}")
-        print(f"{Fore.YELLOW}[*] Installing missing packages...{Style.RESET_ALL}")
-
-        success = True
-        for package in missing_packages:
-            if not RequirementsInstaller.install_package(package):
-                success = False
-
-        if success:
-            print(f"\n{Fore.GREEN}[+] All packages installed successfully!{Style.RESET_ALL}")
-        else:
-            print(f"\n{Fore.RED}[!] Some packages failed to install. Please install them manually.{Style.RESET_ALL}")
-            print(f"{Fore.YELLOW}[*] Command: pip install {' '.join(missing_packages)}{Style.RESET_ALL}")
-
-        return success
-
-
-class TorVault:
-    """Main class to manage Tor connections with multi-location support"""
-
-    LOCATIONS = {
-        'BR': TorLocation('BR', 'Brazil', '🇧🇷', 'Brasília', 'South America'),
-        'US': TorLocation('US', 'United States', '🇺🇸', 'Washington D.C.', 'North America'),
-        'DE': TorLocation('DE', 'Germany', '🇩🇪', 'Berlin', 'Europe'),
-        'FR': TorLocation('FR', 'France', '🇫🇷', 'Paris', 'Europe'),
-        'GB': TorLocation('GB', 'United Kingdom', '🇬🇧', 'London', 'Europe'),
-        'CA': TorLocation('CA', 'Canada', '🇨🇦', 'Ottawa', 'North America'),
-        'AU': TorLocation('AU', 'Australia', '🇦🇺', 'Canberra', 'Oceania'),
-        'JP': TorLocation('JP', 'Japan', '🇯🇵', 'Tokyo', 'Asia'),
-        'IN': TorLocation('IN', 'India', '🇮🇳', 'New Delhi', 'Asia'),
-        'NL': TorLocation('NL', 'Netherlands', '🇳🇱', 'Amsterdam', 'Europe'),
-        'SE': TorLocation('SE', 'Sweden', '🇸🇪', 'Stockholm', 'Europe'),
-        'CH': TorLocation('CH', 'Switzerland', '🇨🇭', 'Bern', 'Europe'),
-        'RU': TorLocation('RU', 'Russia', '🇷🇺', 'Moscow', 'Europe/Asia'),
-        'CN': TorLocation('CN', 'China', '🇨🇳', 'Beijing', 'Asia'),
-        'ZA': TorLocation('ZA', 'South Africa', '🇿🇦', 'Pretoria', 'Africa'),
-        'MX': TorLocation('MX', 'Mexico', '🇲🇽', 'Mexico City', 'North America'),
-        'IT': TorLocation('IT', 'Italy', '🇮🇹', 'Rome', 'Europe'),
-        'ES': TorLocation('ES', 'Spain', '🇪🇸', 'Madrid', 'Europe'),
-        'PT': TorLocation('PT', 'Portugal', '🇵🇹', 'Lisbon', 'Europe'),
-        'NO': TorLocation('NO', 'Norway', '🇳🇴', 'Oslo', 'Europe'),
-        'FI': TorLocation('FI', 'Finland', '🇫🇮', 'Helsinki', 'Europe'),
-        'NZ': TorLocation('NZ', 'New Zealand', '🇳🇿', 'Wellington', 'Oceania'),
-        'SG': TorLocation('SG', 'Singapore', '🇸🇬', 'Singapore', 'Asia'),
-        'AE': TorLocation('AE', 'UAE', '🇦🇪', 'Abu Dhabi', 'Asia'),
-        'IL': TorLocation('IL', 'Israel', '🇮🇱', 'Jerusalem', 'Asia'),
-        'TR': TorLocation('TR', 'Turkey', '🇹🇷', 'Ankara', 'Europe/Asia'),
-        'AR': TorLocation('AR', 'Argentina', '🇦🇷', 'Buenos Aires', 'South America'),
-        'CL': TorLocation('CL', 'Chile', '🇨🇱', 'Santiago', 'South America'),
-        'CO': TorLocation('CO', 'Colombia', '🇨🇴', 'Bogotá', 'South America'),
-        'PE': TorLocation('PE', 'Peru', '🇵🇪', 'Lima', 'South America'),
-        'EG': TorLocation('EG', 'Egypt', '🇪🇬', 'Cairo', 'Africa'),
-        'NG': TorLocation('NG', 'Nigeria', '🇳🇬', 'Abuja', 'Africa'),
-        'KE': TorLocation('KE', 'Kenya', '🇰🇪', 'Nairobi', 'Africa'),
-        'PK': TorLocation('PK', 'Pakistan', '🇵🇰', 'Islamabad', 'Asia'),
-        'BD': TorLocation('BD', 'Bangladesh', '🇧🇩', 'Dhaka', 'Asia'),
-        'PH': TorLocation('PH', 'Philippines', '🇵🇭', 'Manila', 'Asia'),
-        'VN': TorLocation('VN', 'Vietnam', '🇻🇳', 'Hanoi', 'Asia'),
-        'TH': TorLocation('TH', 'Thailand', '🇹🇭', 'Bangkok', 'Asia'),
-        'MY': TorLocation('MY', 'Malaysia', '🇲🇾', 'Kuala Lumpur', 'Asia'),
-        'ID': TorLocation('ID', 'Indonesia', '🇮🇩', 'Jakarta', 'Asia'),
-    }
-
-    # Configurable via env var instead of hardcoded to one machine.
-    WINDOWS_TOR_PATH = os.environ.get(
-        "TORVAULT_TOR_PATH",
-        r"C:\Users\AyhansPC\Downloads\Projects\Tunnel Tools\Network Projects\tor.exe"
-    )
-
-    def __init__(self, tor_port: int = 9050, control_port: int = 9051, password: str = None):
-        self.tor_port = tor_port
-        self.control_port = control_port
-        self.password = password or ""
-        self.controller: Optional[Controller] = None
-        self.controller_lock = threading.Lock()  # protects concurrent access from the rotation thread
-        self.current_location: Optional[str] = None
-        self.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.connection_history: List[Dict] = []
-        self.is_auto_rotating = False
-        self.rotation_thread: Optional[threading.Thread] = None
-        self.tor_process: Optional[subprocess.Popen] = None
-        self.tor_started_manually = False
-
-        self.log_file = f"torvault_{self.session_id}.log"
-        self.setup_logging()
-
-        self.stats = {
-            'total_switches': 0,
-            'successful_switches': 0,
-            'failed_switches': 0,
-            'start_time': datetime.now()
-        }
-
-        # Clean shutdown on Ctrl+C / SIGTERM instead of leaving the Tor
-        # process or rotation thread running in the background.
-        signal.signal(signal.SIGINT, self._handle_signal)
-        signal.signal(signal.SIGTERM, self._handle_signal)
-
-    def _handle_signal(self, signum, frame):
-        self.logger.info(f"[*] Received signal {signum}, shutting down cleanly...")
-        self.shutdown()
-        sys.exit(0)
-
-    def shutdown(self):
-        """Stop rotation, close the controller, and stop any Tor process we started."""
-        if self.is_auto_rotating:
-            self.stop_auto_rotate()
-        if self.controller:
-            try:
-                self.controller.close()
-            except Exception:
-                pass
-            self.controller = None
-        if platform.system() == 'Windows' and self.tor_process:
-            self.stop_tor_windows()
-
-    def setup_logging(self):
-        """Initialize logging system with Windows encoding fix"""
-        import logging
-
-        class SafeStreamHandler(logging.StreamHandler):
-            def emit(self, record):
-                try:
-                    msg = self.format(record)
-                    if platform.system() == 'Windows':
-                        replacements = {
-                            '✅': '[OK]', '❌': '[ERROR]', '⚠️': '[WARN]', '🔄': '[ROTATE]',
-                            '📦': '[PACKAGE]', '📊': '[STATS]', '🌐': '[NET]', '🔍': '[SEARCH]',
-                            '📍': '[LOC]', '🏙️': '[CITY]', '🏛️': '[REGION]', '🏢': '[ISP]',
-                            '🕐': '[TIME]', '🔌': '[PORT]', '🎮': '[CTRL]', '📅': '[DATE]',
-                            '📁': '[FILE]', '📜': '[HISTORY]',
-                        }
-                        for emoji, replacement in replacements.items():
-                            msg = msg.replace(emoji, replacement)
-                    stream = self.stream
-                    stream.write(msg + self.terminator)
-                    self.flush()
-                except Exception:
-                    self.handleError(record)
-
-        logger = logging.getLogger(__name__)
-        logger.handlers.clear()
-
-        handler = SafeStreamHandler(sys.stdout)
-        handler.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-
-        file_handler = logging.FileHandler(self.log_file, encoding='utf-8')
-        file_handler.setLevel(logging.INFO)
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-
-        logger.setLevel(logging.INFO)
-        self.logger = logger
-
-    def display_banner(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(BANNER)
-        print(f"{Fore.CYAN}[DATE] Session: {self.session_id}{Style.RESET_ALL}")
-        print(f"{Fore.CYAN}[NET] Connected to Tor: {'[YES]' if self.check_tor_connection() else '[NO]'}{Style.RESET_ALL}")
-        print(f"{Fore.CYAN}[i] Platform: {platform.system()}{Style.RESET_ALL}")
-        self.display_contact_info()
-        print("=" * 70)
-
-    def display_contact_info(self):
-        print(f"{Fore.YELLOW}[i] Email: umc.mansur13@icloud.com{Style.RESET_ALL}")
-        print(f"{Fore.YELLOW}[i] GitHub: https://github.com/AyhanMansur{Style.RESET_ALL}")
-
-    def create_torrc_with_controlport(self) -> bool:
-        """Create or update torrc with ControlPort configuration"""
-        try:
-            torrc_paths = [
-                os.path.join(os.environ.get("APPDATA", ""), "tor", "torrc"),
-                os.path.join(os.path.dirname(self.WINDOWS_TOR_PATH), "torrc"),
-                os.path.join(os.path.dirname(self.WINDOWS_TOR_PATH), "Data", "Tor", "torrc"),
-            ]
-
-            torrc_path = None
-            for path in torrc_paths:
-                if path and (os.path.exists(os.path.dirname(path)) or os.path.exists(path)):
-                    torrc_path = path
-                    break
-
-            if not torrc_path:
-                torrc_path = os.path.join(os.path.dirname(self.WINDOWS_TOR_PATH), "torrc")
-                os.makedirs(os.path.dirname(torrc_path), exist_ok=True)
-
-            if os.path.exists(torrc_path):
-                with open(torrc_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                    if 'ControlPort' in content and '9051' in content:
-                        self.logger.info("[i] ControlPort already configured in torrc")
-                        return True
-
-            # NOTE: previously this wrote a blank "HashedControlPassword"
-            # line, which is invalid torrc syntax. CookieAuthentication
-            # alone is sufficient for local use; add a real
-            # HashedControlPassword (generated via `tor --hash-password`)
-            # only if you want password auth instead of cookie auth.
-            config = """
-# Tor configuration for TorVault
-SocksPort 9050
-ControlPort 9051
-CookieAuthentication 1
-"""
-
-            with open(torrc_path, 'w', encoding='utf-8') as f:
-                f.write(config.strip())
-
-            self.logger.info(f"[i] Created torrc with ControlPort at: {torrc_path}")
-            self.logger.info("[i] Please restart Tor for changes to take effect")
-            return True
-
-        except Exception as e:
-            self.logger.error(f"[!] Failed to create torrc: {e}")
-            return False
-
-    def start_tor_with_controlport(self) -> bool:
-        """Start Tor with ControlPort enabled"""
-        if platform.system() != 'Windows':
-            self.logger.info(
-                "[i] Non-Windows platform detected: please start Tor yourself, "
-                "e.g. `tor -f /etc/tor/torrc` with ControlPort 9051 and "
-                "CookieAuthentication 1 enabled."
-            )
-            return False
-
-        if not os.path.exists(self.WINDOWS_TOR_PATH):
-            self.logger.error(
-                f"[!] tor.exe not found at {self.WINDOWS_TOR_PATH}. "
-                f"Set the TORVAULT_TOR_PATH environment variable to the correct path."
-            )
-            return False
-
-        try:
-            self.create_torrc_with_controlport()
-
-            os.system("taskkill /f /im tor.exe 2>nul")
-            time.sleep(2)
-
-            tor_dir = os.path.dirname(self.WINDOWS_TOR_PATH)
-
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            startupinfo.wShowWindow = subprocess.SW_HIDE
-
-            self.tor_process = subprocess.Popen(
-                [self.WINDOWS_TOR_PATH, "-f", os.path.join(tor_dir, "torrc")],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                startupinfo=startupinfo,
-                creationflags=subprocess.CREATE_NO_WINDOW
-            )
-
-            self.logger.info("[i] Starting Tor with ControlPort enabled...")
-            for i in range(15):
-                time.sleep(1)
-                if self.check_tor_connection():
-                    self.logger.info("[OK] Tor started successfully with ControlPort!")
-                    return True
-                if i % 3 == 0:
-                    print(".", end="", flush=True)
-
-            self.logger.error("[!] Tor failed to start properly")
-            return False
-
-        except Exception as e:
-            self.logger.error(f"[!] Failed to start Tor with ControlPort: {e}")
-            return False
-
-    def stop_tor_windows(self):
-        if self.tor_process:
-            try:
-                self.logger.info("[i] Stopping Tor process...")
-                self.tor_process.terminate()
-                self.tor_process.wait(timeout=5)
-                self.logger.info("[i] Tor process stopped")
-            except Exception as e:
-                self.logger.error(f"[!] Error stopping Tor: {e}")
-                try:
-                    self.tor_process.kill()
-                except Exception:
-                    pass
-            finally:
-                self.tor_process = None
-
-    def check_tor_connection(self) -> bool:
-        try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(2)
-            result = sock.connect_ex(('127.0.0.1', self.tor_port))
-            sock.close()
-            return result == 0
-        except Exception:
-            return False
-
-    def connect_tor(self) -> bool:
-        """Connect to Tor control port"""
-        try:
-            self.logger.info(f"[i] Connecting to Tor control port {self.control_port}...")
-
-            for attempt in range(5):
-                try:
-                    self.controller = Controller.from_port(port=self.control_port)
-                    # Fixed: previously the configured password was never
-                    # actually passed to authenticate(), so password-protected
-                    # ControlPorts would always fail.
-                    if self.password:
-                        self.controller.authenticate(password=self.password)
-                    else:
-                        self.controller.authenticate()
-                    self.logger.info(f"[OK] Connected to Tor control port {self.control_port}")
-                    return True
-                except stem.SocketError as e:
-                    if attempt < 4:
-                        self.logger.info(f"[i] Attempt {attempt + 1} failed, retrying...")
-                        time.sleep(2)
-                    else:
-                        raise e
-
-            return False
-
-        except Exception as e:
-            self.logger.error(f"[!] Failed to connect to Tor control port: {e}")
-            self.logger.error("[!] Make sure Tor is running with ControlPort enabled")
-            self.logger.info("[i] Try running Tor with: tor -f torrc")
-            return False
-
-    def get_current_ip(self, use_tor: bool = True) -> Optional[str]:
-        try:
-            if use_tor:
-                session = requests.Session()
-                session.proxies = {
-                    'http': f'socks5h://127.0.0.1:{self.tor_port}',
-                    'https': f'socks5h://127.0.0.1:{self.tor_port}'
-                }
-                response = session.get('https://api.ipify.org?format=json', timeout=10)
-            else:
-                response = requests.get('https://api.ipify.org?format=json', timeout=10)
-
-            if response.status_code == 200:
-                return response.json().get('ip')
-            return None
-        except Exception as e:
-            self.logger.error(f"[!] Failed to get IP: {e}")
-            return None
-
-    def get_geo_location(self, ip: str) -> Optional[Dict]:
-        try:
-            response = requests.get(f'http://ip-api.com/json/{ip}', timeout=10)
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('status') == 'success':
-                    return {
-                        'country': data.get('country'),
-                        'country_code': data.get('countryCode'),
-                        'city': data.get('city'),
-                        'region': data.get('regionName'),
-                        'isp': data.get('isp'),
-                        'lat': data.get('lat'),
-                        'lon': data.get('lon'),
-                        'timezone': data.get('timezone')
-                    }
-            return None
-        except Exception as e:
-            self.logger.error(f"[!] Failed to get geolocation: {e}")
-            return None
-
-    def switch_location(self, country_code: str, retry_count: int = 3) -> bool:
-        """Switch Tor exit node to a specific country.
-
-        Fixed: previously this just called NEWNYM repeatedly and hoped the
-        random circuit happened to land in the target country, which is
-        unreliable for less common countries. Now it tells Tor which exit
-        country to use via SETCONF ExitNodes before requesting a new circuit.
-        """
-        if country_code not in self.LOCATIONS:
-            self.logger.error(f"[!] Invalid country code: {country_code}")
-            return False
-
-        if not self.controller:
-            if not self.connect_tor():
-                return False
-
-        self.stats['total_switches'] += 1
-
-        with self.controller_lock:
-            try:
-                self.controller.set_conf('ExitNodes', f'{{{country_code.lower()}}}')
-                self.controller.set_conf('StrictNodes', '1')
-            except Exception as e:
-                self.logger.warning(f"[*] Could not set ExitNodes preference: {e}")
-
-            for attempt in range(retry_count):
-                try:
-                    self.controller.signal(Signal.NEWNYM)
-                    time.sleep(2 + attempt)
-
-                    new_ip = self.get_current_ip(use_tor=True)
-
-                    if new_ip:
-                        location = self.get_geo_location(new_ip)
-                        if location and location.get('country_code') == country_code:
-                            self.current_location = country_code
-                            self.stats['successful_switches'] += 1
-
-                            switch_record = {
-                                'timestamp': datetime.now().isoformat(),
-                                'country': country_code,
-                                'ip': new_ip,
-                                'location': location
-                            }
-                            self.connection_history.append(switch_record)
-
-                            self.logger.info(
-                                f"[OK] Successfully switched to "
-                                f"{self.LOCATIONS[country_code].flag} {self.LOCATIONS[country_code].country_name}"
-                            )
-                            self.logger.info(f"   [NET] New IP: {new_ip}")
-                            self.logger.info(
-                                f"   [LOC] Location: {location.get('city')}, "
-                                f"{location.get('region')}, {location.get('country')}"
-                            )
-                            self.logger.info(f"   [ISP] ISP: {location.get('isp')}")
-                            self.logger.info(f"   [TIME] Timezone: {location.get('timezone')}")
-                            return True
-                        else:
-                            self.logger.warning(f"[*] Attempt {attempt + 1}: Not in correct country yet")
-                    else:
-                        self.logger.warning(f"[*] Attempt {attempt + 1}: Could not get IP")
-
-                except Exception as e:
-                    self.logger.error(f"[!] Attempt {attempt + 1} failed: {e}")
-                    time.sleep(1)
-
-            self.stats['failed_switches'] += 1
-            self.logger.error(f"[!] Failed to switch to {country_code} after {retry_count} attempts")
-            return False
-
-    def rotate_location_randomly(self) -> bool:
-        available_locations = list(self.LOCATIONS.keys())
-        if self.current_location in available_locations:
-            available_locations.remove(self.current_location)
-
-        if not available_locations:
-            return False
-
-        random_location = random.choice(available_locations)
-        return self.switch_location(random_location)
-
-    def auto_rotate(self, interval: int = 30):
-        self.is_auto_rotating = True
-
-        def rotation_loop():
-            while self.is_auto_rotating:
-                self.rotate_location_randomly()
-                for _ in range(interval):
-                    if not self.is_auto_rotating:
-                        break
-                    time.sleep(1)
-
-        self.rotation_thread = threading.Thread(target=rotation_loop, daemon=True)
-        self.rotation_thread.start()
-        self.logger.info(f"[ROTATE] Auto-rotation started (every {interval} seconds)")
-
-    def stop_auto_rotate(self):
-        self.is_auto_rotating = False
-        if self.rotation_thread:
-            self.rotation_thread.join(timeout=5)
-        self.logger.info("[ROTATE] Auto-rotation stopped")
-
-    def test_connection_speed(self) -> Dict:
-        try:
-            start_time = time.time()
-            response = requests.get(
-                'https://speedtest.tele2.net/10MB.zip',
-                proxies={'http': f'socks5h://127.0.0.1:{self.tor_port}',
-                         'https': f'socks5h://127.0.0.1:{self.tor_port}'},
-                stream=True,
-                timeout=60
-            )
-
-            total_size = 0
-            chunk_count = 0
-            for chunk in response.iter_content(chunk_size=8192):
-                total_size += len(chunk)
-                chunk_count += 1
-                if chunk_count % 100 == 0:
-                    print(".", end="", flush=True)
-
-            elapsed_time = time.time() - start_time
-            if elapsed_time <= 0:
-                elapsed_time = 0.001  # guard against div-by-zero on very fast/cached responses
-
-            speed_mbps = (total_size * 8) / (elapsed_time * 1024 * 1024)
-            speed_kbps = speed_mbps * 1024
-
-            return {
-                'speed_mbps': round(speed_mbps, 2),
-                'speed_kbps': round(speed_kbps, 2),
-                'total_size_mb': round(total_size / (1024 * 1024), 2),
-                'time_seconds': round(elapsed_time, 2)
-            }
-
-        except Exception as e:
-            self.logger.error(f"[!] Speed test failed: {e}")
-            return {'error': str(e)}
-
-    def show_statistics(self):
-        uptime = datetime.now() - self.stats['start_time']
-
-        print(f"\n{Fore.CYAN}[STATS] Connection Statistics{Style.RESET_ALL}")
-        print("=" * 50)
-        print(f"Uptime: {str(uptime).split('.')[0]}")
-        print(f"Total switches: {self.stats['total_switches']}")
-        print(f"Successful switches: {self.stats['successful_switches']}")
-        print(f"Failed switches: {self.stats['failed_switches']}")
-
-        success_rate = (self.stats['successful_switches'] / max(1, self.stats['total_switches'])) * 100
-        print(f"Success rate: {success_rate:.1f}%")
-        print(f"Connection history: {len(self.connection_history)} entries")
-
-        if self.connection_history:
-            print(f"\n{Fore.YELLOW}[i] Recent connections:{Style.RESET_ALL}")
-            for entry in self.connection_history[-5:]:
-                print(f"  • {entry['timestamp'][:19]} -> {entry['country']} ({entry['ip']})")
-
-    def show_location_list(self):
-        print(f"\n{Fore.CYAN}[NET] Available Tor Locations{Style.RESET_ALL}")
-        print("=" * 70)
-        print(f"{'Code':<6} {'Flag':<4} {'Country':<20} {'Capital':<15} {'Continent':<15}")
-        print("-" * 70)
-
-        for code, loc in sorted(self.LOCATIONS.items()):
-            current = "[LOC]" if code == self.current_location else "    "
-            print(f"{current} {code:<4} {loc.flag:<4} {loc.country_name:<20} {loc.capital:<15} {loc.continent:<15}")
-
-    def show_current_status(self):
-        print(f"\n{Fore.CYAN}[SEARCH] Current Connection Status{Style.RESET_ALL}")
-        print("=" * 50)
-
-        if self.current_location:
-            loc = self.LOCATIONS.get(self.current_location)
-            if loc:
-                print(f"[LOC] Location: {loc.flag} {loc.country_name}")
-                print(f"   Capital: {loc.capital}")
-                print(f"   Continent: {loc.continent}")
-        else:
-            print("[LOC] Location: Not set")
-
-        ip = self.get_current_ip(use_tor=True)
-        if ip:
-            print(f"[NET] IP Address: {ip}")
-            location = self.get_geo_location(ip)
-            if location:
-                print(f"[CITY] City: {location.get('city', 'Unknown')}")
-                print(f"[REGION] Region: {location.get('region', 'Unknown')}")
-                print(f"[ISP] ISP: {location.get('isp', 'Unknown')}")
-                print(f"[TIME] Timezone: {location.get('timezone', 'Unknown')}")
-                if location.get('lat') and location.get('lon'):
-                    print(f"[LOC] Coordinates: {location['lat']}, {location['lon']}")
-        else:
-            print("[NET] IP Address: Could not determine (Tor may not be connected)")
-
-        print(f"[PORT] Tor Port: {self.tor_port}")
-        print(f"[CTRL] Control Port: {self.control_port}")
-        print(f"[DATE] Session ID: {self.session_id}")
-
-        if self.is_auto_rotating:
-            print(f"[ROTATE] Auto-rotation: Active")
-
-    def show_connection_history(self):
-        if not self.connection_history:
-            print(f"\n{Fore.YELLOW}[i] No connection history available{Style.RESET_ALL}")
-            return
-
-        print(f"\n{Fore.CYAN}[HISTORY] Connection History{Style.RESET_ALL}")
-        print("=" * 80)
-        print(f"{'#':<4} {'Timestamp':<20} {'Country':<15} {'IP':<16} {'City':<15}")
-        print("-" * 80)
-
-        for i, entry in enumerate(reversed(self.connection_history[-20:]), 1):
-            loc = self.LOCATIONS.get(entry['country'], None)
-            flag = loc.flag if loc else ""
-            city = entry['location'].get('city', 'N/A') if entry.get('location') else 'N/A'
-            print(f"{i:<4} {entry['timestamp'][:19]:<20} {flag} {entry['country']:<11} {entry['ip']:<16} {city[:15]}")
-
-    def export_history(self, filename: str = None):
-        if not filename:
-            filename = f"torvault_history_{self.session_id}.json"
-
-        try:
-            with open(filename, 'w') as f:
-                json.dump(self.connection_history, f, indent=2)
-            self.logger.info(f"[FILE] History exported to {filename}")
-        except Exception as e:
-            self.logger.error(f"[!] Failed to export history: {e}")
-
-    def run_interactive(self):
-        self.display_banner()
-
-        if platform.system() == 'Windows':
-            print(f"\n{Fore.YELLOW}[i] Starting Tor with ControlPort enabled...{Style.RESET_ALL}")
-            if not self.start_tor_with_controlport():
-                print(f"{Fore.YELLOW}[*] Could not auto-start Tor. Please start it manually.{Style.RESET_ALL}")
-                print(f"   Tor path: {self.WINDOWS_TOR_PATH}")
-                print(f"   Make sure to use: tor -f torrc")
-            else:
-                print(f"{Fore.GREEN}[OK] Tor is running with ControlPort enabled!{Style.RESET_ALL}")
-
-        if not self.check_tor_connection():
-            print(f"\n{Fore.RED}[!] Tor is not running!{Style.RESET_ALL}")
-            print("Please start Tor with ControlPort enabled:")
-            print(f"  tor -f torrc")
-            input(f"\n{Fore.YELLOW}[i] Press Enter after starting Tor...{Style.RESET_ALL}")
-
-            if not self.check_tor_connection():
-                print(f"{Fore.RED}[!] Still cannot connect to Tor. Exiting...{Style.RESET_ALL}")
-                return
-
-        if not self.connect_tor():
-            print(f"{Fore.RED}[!] Failed to connect to Tor control port.{Style.RESET_ALL}")
-            print(f"{Fore.YELLOW}[i] Make sure ControlPort 9051 is enabled in torrc{Style.RESET_ALL}")
-            return
-
-        self.show_current_status()
-
-        try:
-            while True:
-                print("\n" + "=" * 70)
-                print(f"{Fore.CYAN}[MENU] Main Menu{Style.RESET_ALL}")
-                print(f"{Fore.YELLOW}┌─────────────────────────────────────────────────────────────────────┐{Style.RESET_ALL}")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}1{Fore.YELLOW}. Switch to specific location                                      │")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}2{Fore.YELLOW}. Switch to random location                                       │")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}3{Fore.YELLOW}. Show current status                                             │")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}4{Fore.YELLOW}. Test connection speed                                           │")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}5{Fore.YELLOW}. Show available locations                                        │")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}6{Fore.YELLOW}. Auto-rotate locations                                           │")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}7{Fore.YELLOW}. Show statistics                                                │")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}8{Fore.YELLOW}. Show connection history                                         │")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}9{Fore.YELLOW}. Export history                                                  │")
-                print(f"{Fore.YELLOW}│ {Fore.GREEN}0{Fore.YELLOW}. Exit                                                             │")
-                print(f"{Fore.YELLOW}└─────────────────────────────────────────────────────────────────────┘{Style.RESET_ALL}")
-
-                choice = input(f"\n{Fore.GREEN}[i] Select option (0-9): {Style.RESET_ALL}").strip()
-
-                if choice == '1':
-                    print("\n" + "=" * 70)
-                    print(f"{Fore.CYAN}[NET] Select Target Location{Style.RESET_ALL}")
-                    print("=" * 70)
-                    print(f"{'Code':<6} {'Flag':<4} {'Country':<20} {'Capital':<15}")
-                    print("-" * 50)
-
-                    locations_list = sorted(self.LOCATIONS.items())
-                    for i, (code, loc) in enumerate(locations_list[:15], 1):
-                        print(f"{code:<6} {loc.flag:<4} {loc.country_name:<20} {loc.capital:<15}")
-                    if len(locations_list) > 15:
-                        print(f"... and {len(locations_list) - 15} more locations")
-
-                    country = input(f"\n{Fore.GREEN}[i] Enter country code (e.g., BR, US): {Style.RESET_ALL}").strip().upper()
-                    self.switch_location(country)
-
-                elif choice == '2':
-                    print(f"\n{Fore.YELLOW}[ROTATE] Switching to random location...{Style.RESET_ALL}")
-                    self.rotate_location_randomly()
-
-                elif choice == '3':
-                    self.show_current_status()
-
-                elif choice == '4':
-                    print(f"\n{Fore.YELLOW}[i] Testing connection speed...{Style.RESET_ALL}")
-                    print("This may take a moment...")
-                    results = self.test_connection_speed()
-                    if 'error' in results:
-                        print(f"{Fore.RED}[!] Speed test failed: {results['error']}{Style.RESET_ALL}")
-                    else:
-                        print(f"\n{Fore.GREEN}[STATS] Speed Test Results:{Style.RESET_ALL}")
-                        print(f"  • Download speed: {results['speed_mbps']} Mbps ({results['speed_kbps']} Kbps)")
-                        print(f"  • File size: {results['total_size_mb']} MB")
-                        print(f"  • Time: {results['time_seconds']} seconds")
-
-                elif choice == '5':
-                    self.show_location_list()
-
-                elif choice == '6':
-                    if self.is_auto_rotating:
-                        self.stop_auto_rotate()
-                    else:
-                        try:
-                            interval = int(input(f"{Fore.GREEN}[i] Enter rotation interval in seconds (default 30): {Style.RESET_ALL}") or 30)
-                            self.auto_rotate(interval)
-                        except ValueError:
-                            print(f"{Fore.RED}[!] Invalid interval. Using default 30 seconds.{Style.RESET_ALL}")
-                            self.auto_rotate(30)
-
-                elif choice == '7':
-                    self.show_statistics()
-
-                elif choice == '8':
-                    self.show_connection_history()
-
-                elif choice == '9':
-                    filename = input(f"{Fore.GREEN}[i] Enter filename (press Enter for default): {Style.RESET_ALL}").strip()
-                    self.export_history(filename if filename else None)
-
-                elif choice == '0':
-                    print(f"\n{Fore.GREEN}[+] Thank you for using TorVault! Stay anonymous!{Style.RESET_ALL}")
-                    self.display_contact_info()
-                    break
-
-                else:
-                    print(f"{Fore.RED}[!] Invalid option. Please try again.{Style.RESET_ALL}")
-        finally:
-            self.shutdown()
-
-
-def main():
-    """Main entry point"""
-    try:
-        if not RequirementsInstaller.install_all_packages():
-            print(f"\n{Fore.RED}[!] Failed to install required packages.{Style.RESET_ALL}")
-            print(f"{Fore.YELLOW}[i] Please install them manually: pip install stem requests colorama pysocks{Style.RESET_ALL}")
-            sys.exit(1)
-
-        manager = TorVault()
-        manager.run_interactive()
-
-    except KeyboardInterrupt:
-        print(f"\n{Fore.YELLOW}[*] Interrupted by user{Style.RESET_ALL}")
-        print(f"{Fore.GREEN}[+] Goodbye!{Style.RESET_ALL}")
-    except Exception as e:
-        print(f"{Fore.RED}[!] An error occurred: {e}{Style.RESET_ALL}")
-        traceback.print_exc()
-
-
-if __name__ == "__main__":
-    main()
+# ====================== UI HELPERS ==========================
+print_header() {
+  echo -e "\n${BLUE}${BOLD}═══ $* ${NC}"
+}
+
+print_box() {
+  local title="$1"
+  local len=$(( ${#title} + 4 ))
+  printf "${CYAN}┌%${len}s┐${NC}\n" | tr ' ' '─'
+  printf "${CYAN}│ ${YELLOW}%s${CYAN} │${NC}\n" "$title"
+  printf "${CYAN}└%${len}s┘${NC}\n" | tr ' ' '─'
+}
+
+# ====================== CORE FUNCTIONS (unchanged) ==========================
+need_root() {
+  if [[ "${EUID}" -ne 0 ]]; then
+    err "Run as root. Example: sudo bash $0"
+    exit 1
+  fi
+}
+
+usage() {
+  cat <<USAGE
+${APP_NAME}
+
+Usage:
+  $0 menu
+  $0 install <country_code> [socks_port]
+  $0 test <country_code>
+  $0 delete <country_code>
+  $0 restart <country_code>
+  $0 list
+  $0 json <country_code>
+  $0 logs <country_code>
+
+Examples:
+  $0 install tr 9053
+  $0 test tr
+  $0 json tr
+
+Notes:
+  - Creates local SOCKS5 only: 127.0.0.1:<port>
+  - Does not edit x-ui / 3x-ui / Xray.
+  - Country codes are ISO-3166 alpha-2, lowercase or uppercase accepted, e.g. tr, de, nl, fr.
+USAGE
+}
+
+normalize_cc() {
+  local cc="${1:-}"
+  cc="$(echo "$cc" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z')"
+  if [[ ! "$cc" =~ ^[a-z]{2}$ ]]; then
+    err "Invalid country code: ${1:-empty}. Use two letters, e.g. tr, de, nl, fr."
+    exit 1
+  fi
+  echo "$cc"
+}
+
+upper_cc() {
+  echo "$1" | tr '[:lower:]' '[:upper:]'
+}
+
+validate_port() {
+  local port="${1:-}"
+  if [[ ! "$port" =~ ^[0-9]+$ ]] || (( port < 1024 || port > 65535 )); then
+    err "Invalid port: ${port}. Use 1024-65535."
+    exit 1
+  fi
+  echo "$port"
+}
+
+service_name() {
+  local cc
+  cc="$(normalize_cc "$1")"
+  echo "tor-exit-${cc}"
+}
+
+meta_file() {
+  local cc
+  cc="$(normalize_cc "$1")"
+  echo "${NODE_DIR}/${cc}.env"
+}
+
+torrc_file() {
+  local cc
+  cc="$(normalize_cc "$1")"
+  echo "${TORRC_DIR}/tor-exit-${cc}.torrc"
+}
+
+load_meta() {
+  local cc mf
+  cc="$(normalize_cc "$1")"
+  mf="$(meta_file "$cc")"
+  if [[ ! -f "$mf" ]]; then
+    err "Node '${cc}' not found. Install it first."
+    exit 1
+  fi
+  # shellcheck disable=SC1090
+  source "$mf"
+  : "${COUNTRY_CODE:?missing COUNTRY_CODE}"
+  : "${SOCKS_PORT:?missing SOCKS_PORT}"
+}
+
+install_deps() {
+  msg "Installing dependencies"
+  if command -v apt-get >/dev/null 2>&1; then
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y tor curl jq ca-certificates iproute2 netcat-openbsd
+  else
+    err "This script currently supports Debian/Ubuntu apt-based systems."
+    exit 1
+  fi
+}
+
+tor_user() {
+  if id debian-tor >/dev/null 2>&1; then
+    echo "debian-tor"
+  elif id tor >/dev/null 2>&1; then
+    echo "tor"
+  else
+    echo "root"
+  fi
+}
+
+port_in_use_by_other() {
+  local port="$1" service="$2"
+  local pids cmd bad=0
+
+  if ! ss -ltnp 2>/dev/null | awk -v p=":${port}" '$4 ~ p"$" {print}' | grep -q .; then
+    return 1
+  fi
+
+  pids="$(ss -ltnp 2>/dev/null | awk -v p=":${port}" '$4 ~ p"$" {print $NF}' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | sort -u || true)"
+  if [[ -z "$pids" ]]; then
+    return 0
+  fi
+
+  for pid in $pids; do
+    cmd="$(ps -p "$pid" -o args= 2>/dev/null || true)"
+    if [[ "$cmd" != *"$(torrc_file "${service#tor-exit-}")"* ]]; then
+      bad=1
+    fi
+  done
+
+  (( bad == 1 ))
+}
+
+prepare_dirs() {
+  local user="$1"
+  mkdir -p "$BASE_DIR" "$NODE_DIR" "$DATA_BASE" "$LOG_BASE"
+  chown -R "$user":"$user" "$DATA_BASE" "$LOG_BASE" 2>/dev/null || true
+  chmod 755 "$BASE_DIR" "$NODE_DIR"
+}
+
+write_node_files() {
+  local cc="$1" port="$2"
+  local svc torrc data_dir log_file user unit meta
+  svc="$(service_name "$cc")"
+  torrc="$(torrc_file "$cc")"
+  data_dir="${DATA_BASE}/${svc}"
+  log_file="${LOG_BASE}/${svc}.log"
+  user="$(tor_user)"
+  unit="/etc/systemd/system/${svc}.service"
+  meta="$(meta_file "$cc")"
+
+  prepare_dirs "$user"
+  mkdir -p "$data_dir"
+  touch "$log_file"
+  chown -R "$user":"$user" "$data_dir" "$log_file" 2>/dev/null || true
+  chmod 700 "$data_dir"
+
+  cat > "$torrc" <<TORRC
+# Managed by ${APP_NAME}. Do not edit manually unless you know what you are doing.
+SocksPort 127.0.0.1:${port}
+DataDirectory ${data_dir}
+Log notice file ${log_file}
+
+ClientOnly 1
+ExitNodes {${cc}}
+StrictNodes 1
+AvoidDiskWrites 1
+SafeSocks 1
+TORRC
+
+  cat > "$unit" <<UNIT
+[Unit]
+Description=Tor SOCKS5 exit ${cc} on 127.0.0.1:${port}
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/tor -f ${torrc} --RunAsDaemon 0
+Restart=always
+RestartSec=5
+User=${user}
+Group=${user}
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+  cat > "$meta" <<META
+COUNTRY_CODE="${cc}"
+COUNTRY_CODE_UPPER="$(upper_cc "$cc")"
+SOCKS_PORT="${port}"
+SERVICE_NAME="${svc}"
+TORRC_FILE="${torrc}"
+DATA_DIR="${data_dir}"
+LOG_FILE="${log_file}"
+CREATED_AT="$(date -Is)"
+META
+}
+
+curl_socks() {
+  local port="$1" url="$2" timeout="${3:-20}"
+  curl --socks5-hostname "127.0.0.1:${port}" \
+    --silent --show-error --location --max-time "$timeout" \
+    --connect-timeout 10 \
+    -A "${APP_NAME}/1.0" \
+    "$url"
+}
+
+wait_for_socks() {
+  local port="$1" max_wait="${2:-$DEFAULT_WAIT}" i
+  for ((i=1; i<=max_wait; i++)); do
+    if nc -z -w 1 127.0.0.1 "$port" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 1
+  done
+  return 1
+}
+
+get_tor_status() {
+  local port="$1" json is_tor ip
+  json="$(curl_socks "$port" "https://check.torproject.org/api/ip" 25 2>/dev/null || true)"
+  is_tor="$(echo "$json" | jq -r '.IsTor // empty' 2>/dev/null || true)"
+  ip="$(echo "$json" | jq -r '.IP // empty' 2>/dev/null || true)"
+  echo "${is_tor}|${ip}"
+}
+
+get_geo_votes() {
+  local port="$1" c1 c2 c3 c4
+  c1="$(curl_socks "$port" "https://ipinfo.io/country" 15 2>/dev/null | tr -d '\r\n \"' | tr '[:lower:]' '[:upper:]' || true)"
+  c2="$(curl_socks "$port" "https://ifconfig.co/country-iso" 15 2>/dev/null | tr -d '\r\n \"' | tr '[:lower:]' '[:upper:]' || true)"
+  c3="$(curl_socks "$port" "https://ipapi.co/country/" 15 2>/dev/null | tr -d '\r\n \"' | tr '[:lower:]' '[:upper:]' || true)"
+  c4="$(curl_socks "$port" "https://api.country.is/" 15 2>/dev/null | jq -r '.country // empty' 2>/dev/null | tr -d '\r\n \"' | tr '[:lower:]' '[:upper:]' || true)"
+  echo "${c1}|${c2}|${c3}|${c4}"
+}
+
+print_check_result() {
+  local expected="$1" port="$2" is_tor="$3" ip="$4" votes="$5"
+  echo "Country expected: ${expected}"
+  echo "SOCKS5: 127.0.0.1:${port}"
+  echo "Tor check: ${is_tor:-unknown}"
+  echo "Exit IP: ${ip:-unknown}"
+  echo "Geo votes: ${votes}"
+}
+
+health_check() {
+  local cc="$1" port="$2" attempts="${3:-$DEFAULT_ATTEMPTS}" wait_secs="${4:-$DEFAULT_WAIT}"
+  local expected svc attempt status is_tor ip votes match_count vote
+  expected="$(upper_cc "$cc")"
+  svc="$(service_name "$cc")"
+
+  for ((attempt=1; attempt<=attempts; attempt++)); do
+    msg "Health check ${svc}, attempt ${attempt}/${attempts}"
+
+    if ! systemctl is-active --quiet "$svc"; then
+      systemctl restart "$svc" || true
+    fi
+
+    if ! wait_for_socks "$port" "$wait_secs"; then
+      warn "SOCKS port 127.0.0.1:${port} did not become ready. Restarting..."
+      systemctl restart "$svc" || true
+      sleep 5
+      continue
+    fi
+
+    status="$(get_tor_status "$port")"
+    is_tor="${status%%|*}"
+    ip="${status#*|}"
+    votes="$(get_geo_votes "$port")"
+
+    match_count=0
+    IFS='|' read -r -a arr <<< "$votes"
+    for vote in "${arr[@]}"; do
+      if [[ "$vote" == "$expected" ]]; then
+        ((match_count++)) || true
+      fi
+    done
+
+    print_check_result "$expected" "$port" "$is_tor" "$ip" "$votes"
+
+    if [[ "$is_tor" == "true" && "$match_count" -ge 1 ]]; then
+      ok "Node is healthy. Confirmed Tor exit country: ${expected}"
+      return 0
+    fi
+
+    warn "Not confirmed yet. Restarting Tor instance to try another circuit/exit."
+    systemctl restart "$svc" || true
+    sleep 8
+  done
+
+  err "Node could not be confirmed as ${expected} after ${attempts} attempts."
+  return 1
+}
+
+install_node() {
+  local cc port svc
+  cc="$(normalize_cc "$1")"
+  port="$(validate_port "${2:-$(default_port_for "$cc")}")"
+  svc="$(service_name "$cc")"
+
+  install_deps
+
+  msg "Installing node: country=${cc}, socks_port=${port}"
+  systemctl stop "$svc" 2>/dev/null || true
+
+  if port_in_use_by_other "$port" "$svc"; then
+    err "Port ${port} is already in use by another process. Choose another port."
+    ss -ltnp | grep -E ":${port}\b" || true
+    exit 1
+  fi
+
+  write_node_files "$cc" "$port"
+
+  systemctl daemon-reload
+  systemctl enable "$svc"
+  systemctl restart "$svc"
+
+  sleep 5
+  systemctl status "$svc" --no-pager -l || true
+
+  if health_check "$cc" "$port" "$DEFAULT_ATTEMPTS" "$DEFAULT_WAIT"; then
+    echo
+    print_outbound_json "$cc"
+  else
+    warn "Service was created but health check failed. Use '$0 logs ${cc}' and '$0 test ${cc}'."
+    exit 2
+  fi
+}
+
+default_port_for() {
+  local cc="$1" row rcc name port
+  for row in "${COUNTRIES[@]}"; do
+    IFS='|' read -r rcc name port <<< "$row"
+    if [[ "$rcc" == "$cc" ]]; then
+      echo "$port"
+      return 0
+    fi
+  done
+  echo "9059"
+}
+
+test_node() {
+  local cc port
+  cc="$(normalize_cc "$1")"
+  load_meta "$cc"
+  port="$SOCKS_PORT"
+  health_check "$cc" "$port" "$DEFAULT_ATTEMPTS" "$DEFAULT_WAIT"
+}
+
+restart_node() {
+  local cc svc
+  cc="$(normalize_cc "$1")"
+  load_meta "$cc"
+  svc="$SERVICE_NAME"
+  systemctl restart "$svc"
+  sleep 5
+  test_node "$cc"
+}
+
+delete_node() {
+  local cc svc torrc mf data log unit
+  cc="$(normalize_cc "$1")"
+  mf="$(meta_file "$cc")"
+
+  if [[ -f "$mf" ]]; then
+    # shellcheck disable=SC1090
+    source "$mf"
+    svc="${SERVICE_NAME:-$(service_name "$cc")}" 
+    torrc="${TORRC_FILE:-$(torrc_file "$cc")}" 
+    data="${DATA_DIR:-${DATA_BASE}/$(service_name "$cc")}" 
+    log="${LOG_FILE:-${LOG_BASE}/$(service_name "$cc").log}" 
+  else
+    svc="$(service_name "$cc")"
+    torrc="$(torrc_file "$cc")"
+    data="${DATA_BASE}/${svc}"
+    log="${LOG_BASE}/${svc}.log"
+  fi
+
+  unit="/etc/systemd/system/${svc}.service"
+
+  msg "Deleting node ${cc}"
+  systemctl stop "$svc" 2>/dev/null || true
+  systemctl disable "$svc" 2>/dev/null || true
+  rm -f "$unit" "$torrc" "$mf"
+  rm -rf "$data"
+  rm -f "$log"
+  systemctl daemon-reload
+  systemctl reset-failed
+  ok "Deleted ${cc}"
+}
+
+list_nodes() {
+  mkdir -p "$NODE_DIR"
+  if ! compgen -G "${NODE_DIR}/*.env" >/dev/null; then
+    warn "No nodes installed."
+    return 0
+  fi
+
+  printf "${CYAN}%-8s %-8s %-28s %-10s %-18s${NC}\n" "COUNTRY" "PORT" "SERVICE" "ACTIVE" "SOCKS"
+  for mf in "${NODE_DIR}"/*.env; do
+    # shellcheck disable=SC1090
+    source "$mf"
+    local active="inactive"
+    if systemctl is-active --quiet "$SERVICE_NAME"; then active="active"; fi
+    if [[ "$active" == "active" ]]; then
+      printf "${GREEN}%-8s %-8s %-28s %-10s %-18s${NC}\n" "${COUNTRY_CODE_UPPER}" "${SOCKS_PORT}" "${SERVICE_NAME}" "${active}" "127.0.0.1:${SOCKS_PORT}"
+    else
+      printf "${RED}%-8s %-8s %-28s %-10s %-18s${NC}\n" "${COUNTRY_CODE_UPPER}" "${SOCKS_PORT}" "${SERVICE_NAME}" "${active}" "127.0.0.1:${SOCKS_PORT}"
+    fi
+  done
+}
+
+print_outbound_json() {
+  local cc port tag
+  cc="$(normalize_cc "$1")"
+  load_meta "$cc"
+  port="$SOCKS_PORT"
+  tag="tor-${cc}"
+  cat <<JSON
+
+SOCKS5 local:
+127.0.0.1:${port}
+
+Xray outbound sample:
+{
+  "tag": "${tag}",
+  "protocol": "socks",
+  "settings": {
+    "servers": [
+      {
+        "address": "127.0.0.1",
+        "port": ${port}
+      }
+    ]
+  },
+  "targetStrategy": "AsIs"
+}
+JSON
+}
+
+show_logs() {
+  local cc svc log
+  cc="$(normalize_cc "$1")"
+  load_meta "$cc"
+  svc="$SERVICE_NAME"
+  log="$LOG_FILE"
+  echo "===== systemd logs: ${svc} ====="
+  journalctl -u "$svc" --no-pager -n 120 || true
+  echo
+  echo "===== tor log file: ${log} ====="
+  tail -n 120 "$log" 2>/dev/null || true
+}
+
+# ====================== UI MENU FUNCTIONS ==========================
+select_country_menu() {
+  local row i choice cc name port custom_cc custom_port
+  echo -e "\n${CYAN}${BOLD}Select country:${NC}"
+  i=1
+  for row in "${COUNTRIES[@]}"; do
+    IFS='|' read -r cc name port <<< "$row"
+    echo -e "  ${GREEN}${i})${NC} ${name} (${cc^^}) ${BLUE}default port ${port}${NC}"
+    ((i++))
+  done
+  echo -e "  ${GREEN}${i})${NC} ${YELLOW}Custom country code${NC}"
+  read -r -p "$(echo -e "${GREEN}[?] Choice: ${NC}")" choice
+
+  if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 1 && choice < i )); then
+    row="${COUNTRIES[$((choice-1))]}"
+    IFS='|' read -r cc name port <<< "$row"
+    read -r -p "$(echo -e "${GREEN}[?] SOCKS port [${port}]: ${NC}")" custom_port
+    custom_port="${custom_port:-$port}"
+    install_node "$cc" "$custom_port"
+  elif [[ "$choice" == "$i" ]]; then
+    read -r -p "$(echo -e "${GREEN}[?] Country code, e.g. es: ${NC}")" custom_cc
+    custom_cc="$(normalize_cc "$custom_cc")"
+    read -r -p "$(echo -e "${GREEN}[?] SOCKS port [9059]: ${NC}")" custom_port
+    custom_port="${custom_port:-9059}"
+    install_node "$custom_cc" "$custom_port"
+  else
+    err "Invalid choice"
+    exit 1
+  fi
+}
+
+show_status() {
+  echo -e "\n${CYAN}${BOLD}═══ Current Node Status ═══${NC}"
+  list_nodes
+  echo ""
+  local total active
+  total="$(find "${NODE_DIR}" -name '*.env' 2>/dev/null | wc -l)"
+  active=0
+  for mf in "${NODE_DIR}"/*.env 2>/dev/null; do
+    # shellcheck disable=SC1090
+    source "$mf" 2>/dev/null || continue
+    if systemctl is-active --quiet "$SERVICE_NAME" 2>/dev/null; then
+      ((active++))
+    fi
+  done
+  echo -e "${BLUE}Total nodes: ${total}  |  Active: ${GREEN}${active}${NC}  |  Inactive: ${RED}$((total - active))${NC}"
+}
+
+show_help() {
+  usage
+}
+
+main_menu() {
+  while true; do
+    show_banner
+    echo -e "${CYAN}${BOLD}┌─────────────────────────────────────────────────────────────────────┐${NC}"
+    echo -e "${CYAN}${BOLD}│ ${GREEN}1${CYAN}. Install new node                                          │${NC}"
+    echo -e "${CYAN}${BOLD}│ ${GREEN}2${CYAN}. Test an existing node                                    │${NC}"
+    echo -e "${CYAN}${BOLD}│ ${GREEN}3${CYAN}. Restart / change IP of a node                            │${NC}"
+    echo -e "${CYAN}${BOLD}│ ${GREEN}4${CYAN}. Delete a node                                           │${NC}"
+    echo -e "${CYAN}${BOLD}│ ${GREEN}5${CYAN}. List installed nodes                                    │${NC}"
+    echo -e "${CYAN}${BOLD}│ ${GREEN}6${CYAN}. Show Xray outbound JSON for a node                      │${NC}"
+    echo -e "${CYAN}${BOLD}│ ${GREEN}7${CYAN}. View logs of a node                                     │${NC}"
+    echo -e "${CYAN}${BOLD}│ ${GREEN}8${CYAN}. Show overall status                                     │${NC}"
+    echo -e "${CYAN}${BOLD}│ ${GREEN}0${CYAN}. Exit                                                    │${NC}"
+    echo -e "${CYAN}${BOLD}└─────────────────────────────────────────────────────────────────────┘${NC}"
+    read -r -p "$(echo -e "${GREEN}[?] Select option (0-8): ${NC}")" ans
+    case "$ans" in
+      1) select_country_menu ;;
+      2) read -r -p "$(echo -e "${GREEN}[?] Country code: ${NC}")" cc; test_node "$cc" ;;
+      3) read -r -p "$(echo -e "${GREEN}[?] Country code: ${NC}")" cc; restart_node "$cc" ;;
+      4) read -r -p "$(echo -e "${GREEN}[?] Country code: ${NC}")" cc; delete_node "$cc" ;;
+      5) list_nodes; read -r -p "$(echo -e "${YELLOW}[i] Press Enter to continue...${NC}")" ;;
+      6) read -r -p "$(echo -e "${GREEN}[?] Country code: ${NC}")" cc; print_outbound_json "$cc"; read -r -p "$(echo -e "${YELLOW}[i] Press Enter to continue...${NC}")" ;;
+      7) read -r -p "$(echo -e "${GREEN}[?] Country code: ${NC}")" cc; show_logs "$cc"; read -r -p "$(echo -e "${YELLOW}[i] Press Enter to continue...${NC}")" ;;
+      8) show_status; read -r -p "$(echo -e "${YELLOW}[i] Press Enter to continue...${NC}")" ;;
+      0) echo -e "${GREEN}Goodbye!${NC}"; exit 0 ;;
+      *) warn "Invalid choice" ;;
+    esac
+  done
+}
+
+# ====================== MAIN ENTRY ==========================
+main() {
+  need_root
+  local cmd="${1:-menu}"
+  case "$cmd" in
+    menu) main_menu ;;
+    install) [[ $# -ge 2 ]] || { usage; exit 1; }; install_node "$2" "${3:-}" ;;
+    test) [[ $# -eq 2 ]] || { usage; exit 1; }; test_node "$2" ;;
+    delete|remove) [[ $# -eq 2 ]] || { usage; exit 1; }; delete_node "$2" ;;
+    restart) [[ $# -eq 2 ]] || { usage; exit 1; }; restart_node "$2" ;;
+    list) list_nodes ;;
+    json) [[ $# -eq 2 ]] || { usage; exit 1; }; print_outbound_json "$2" ;;
+    logs) [[ $# -eq 2 ]] || { usage; exit 1; }; show_logs "$2" ;;
+    help|-h|--help) usage ;;
+    *) usage; exit 1 ;;
+  esac
+}
+
+main "$@"
