@@ -149,7 +149,10 @@ python AyhanX-Torigato.py
 
 ### Linux/macOS
 ```bash
-python3 AyhanX-Torigato.py
+git clone https://github.com/AyhanMansur/AyhanX-Torigato.git
+cd AyhanX-Torigato
+sudo ./AyhanX-Torigato.sh menu
+
 ```
 
 ### One-Line Setup
@@ -157,9 +160,6 @@ python3 AyhanX-Torigato.py
 # Clone the repository
 git clone https://github.com/AyhanMansur/AyhanX-Torigato.git
 cd AyhanX-Torigato
-
-# Run (auto-installs dependencies)
-python AyhanX-Torigato.py
 ```
 
 ---
